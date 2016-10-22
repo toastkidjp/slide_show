@@ -1,0 +1,46 @@
+apply plugin: 'application'
+
+mainClassName   = 'jp.toastkid.slideshow.Main'
+
+def defaultEncoding = 'UTF-8'
+def jdkVersion      = '1.8'
+def javafxHome      = System.getenv('JAVA_HOME')
+
+[compileJava, compileTestJava]*.options*.encoding = defaultEncoding
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'com.jfoenix:jfoenix:1.0.0'
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    compile 'org.slf4j:slf4j-log4j12:1.7.21'
+    compile 'org.eclipse.collections:eclipse-collections:8.0.0-M1'
+    compile 'io.projectreactor:reactor-core:3.0.2.RELEASE'
+    testCompile 'junit:junit:4.12'
+}
+
+compileJava {
+    sourceSets.main.compileClasspath += configurations.testCompile
+}
+
+run {
+    classpath += configurations.runtime
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class' : mainClassName
+    }
+    destinationDir = projectDir
+    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
+task excludedJar(type: Jar) {
+    baseName = rootProject.name + "_excluded"
+    destinationDir = projectDir
+    from sourceSets.main.output
+    exclude('com/jfoenix/**')
+    exclude('io/**')
+}
