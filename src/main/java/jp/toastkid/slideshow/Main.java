@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import javafx.application.Application;
 import javafx.collections.ObservableMap;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -15,6 +17,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import jp.toastkid.slideshow.slide.Slide;
@@ -48,6 +51,9 @@ public class Main extends Application {
     /** Back key. */
     private static final KeyCodeCombination FORWARD_2 = new KeyCodeCombination(KeyCode.RIGHT);
 
+    /** Quit key. */
+    private static final KeyCodeCombination QUIT = new KeyCodeCombination(KeyCode.ESCAPE);
+
     /** This app's Stage. */
     private final Stage stage;
 
@@ -62,11 +68,24 @@ public class Main extends Application {
      */
     public Main() {
         this.stage = new Stage(StageStyle.DECORATED);
-
-        //stage.setScene(readScene());
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setTitle(TITLE);
         stage.setOnCloseRequest(event -> stage.close());
+        maximizeStage();
+    }
+
+    /**
+     * Maximized the stage.
+     */
+    private void maximizeStage() {
+        final Screen screen = Screen.getScreens().get(0);
+        final Rectangle2D bounds = screen.getVisualBounds();
+        final BoundingBox maximizedBox = new BoundingBox(
+                bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight());
+        stage.setX(maximizedBox.getMinX());
+        stage.setY(maximizedBox.getMinY());
+        stage.setWidth(maximizedBox.getWidth());
+        stage.setHeight(maximizedBox.getHeight());
     }
 
     /**
@@ -88,18 +107,45 @@ public class Main extends Application {
         }
 
         readSlides();
-        final Pane root = new StackPane();
-        root.getChildren().addAll(slides);
-        slides.get(0).setVisible(true);
-        final Scene scene = new Scene(root);
+        final Scene scene = new Scene(loadRootPane());
+        putAccelerators(scene);
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
+
+    /**
+     * Put accelerators.
+     * @param scene
+     */
+    private void putAccelerators(final Scene scene) {
         final ObservableMap<KeyCombination,Runnable> accelerators = scene.getAccelerators();
         accelerators.put(FULL_SCREEN_KEY, () -> stage.setFullScreen(true));
         accelerators.put(BACK_1,    this::back);
         accelerators.put(BACK_2,    this::back);
         accelerators.put(FORWARD_1, this::forward);
         accelerators.put(FORWARD_2, this::forward);
-        stage.setScene(scene);
-        stage.showAndWait();
+        accelerators.put(QUIT,      this::quit);
+    }
+
+    /**
+     * If this screen is not full screen, This app will close.
+     */
+    private void quit() {
+        if (stage.isFullScreen()) {
+            return;
+        }
+        stage.close();
+    }
+
+    /**
+     * Make root pane and set slides.
+     * @return
+     */
+    private Pane loadRootPane() {
+        final Pane root = new StackPane();
+        root.getChildren().addAll(slides);
+        slides.get(0).setVisible(true);
+        return root;
     }
 
     /**

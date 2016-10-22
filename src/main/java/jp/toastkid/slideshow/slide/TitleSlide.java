@@ -49,7 +49,7 @@ public class TitleSlide extends Slide {
             final Slide slide = make(title);
             final Label sub = new Label(text);
             sub.setFont(SUB_FONT);
-            slide.addContents(sub);
+            slide.addContents(LineFactory.centering(sub));
             return slide;
         }
     }

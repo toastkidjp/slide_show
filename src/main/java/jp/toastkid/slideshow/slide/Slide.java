@@ -4,7 +4,6 @@ import org.eclipse.collections.impl.utility.ArrayIterate;
 
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -14,10 +13,10 @@ import javafx.scene.text.Font;
  *
  * @author Toast kid
  */
-public class Slide extends AnchorPane {
+public class Slide extends VBox {
 
     /** Header text font. */
-    private static final Font HEAD_FONT = new Font(100);
+    private static final Font HEAD_FONT = new Font(150);
 
     /** Title label. */
     protected final Label title;
@@ -32,9 +31,8 @@ public class Slide extends AnchorPane {
         title = new Label("Title");
         initTitle();
         contents = new VBox();
-        final VBox box = new VBox(title, contents);
         this.setVisible(false);
-        this.getChildren().add(box);
+        this.getChildren().addAll(LineFactory.centering(title), contents);
     }
 
     /**
@@ -60,6 +58,11 @@ public class Slide extends AnchorPane {
         this.contents.getChildren().addAll(contents);
     }
 
+    /**
+     * Factory of Slide.
+     * @author Toast kid
+     *
+     */
     public static class Factory {
 
         /**
@@ -70,7 +73,7 @@ public class Slide extends AnchorPane {
          */
         public static Slide make(final String title, final String... lines) {
             final Slide slide = new Slide();
-            ArrayIterate.forEach(lines, line -> slide.addContents(new Label(line)));
+            ArrayIterate.collect(lines, LineFactory::normal).each(slide::addContents);
             slide.setTitle(title);
             return slide;
         }
