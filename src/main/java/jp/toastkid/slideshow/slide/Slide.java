@@ -3,11 +3,9 @@ package jp.toastkid.slideshow.slide;
 import org.eclipse.collections.impl.utility.ArrayIterate;
 
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
@@ -16,7 +14,7 @@ import javafx.scene.text.Font;
  *
  * @author Toast kid
  */
-public class Slide extends Scene {
+public class Slide extends AnchorPane {
 
     /** Header text font. */
     private static final Font HEAD_FONT = new Font(100);
@@ -31,22 +29,12 @@ public class Slide extends Scene {
      * Constructor.
      */
     public Slide() {
-        this(new StackPane());
-    }
-
-    /**
-     * Constructor.
-     * @param root
-     */
-    public Slide(final Parent root) {
-        super(root);
         title = new Label("Title");
         initTitle();
         contents = new VBox();
         final VBox box = new VBox(title, contents);
-        box.setPrefWidth(1200);
-        box.setPrefHeight(800);
-        this.setRoot(box);
+        this.setVisible(false);
+        this.getChildren().add(box);
     }
 
     /**
@@ -81,7 +69,7 @@ public class Slide extends Scene {
          * @return Slide
          */
         public static Slide make(final String title, final String... lines) {
-            final Slide slide = new Slide(new StackPane());
+            final Slide slide = new Slide();
             ArrayIterate.forEach(lines, line -> slide.addContents(new Label(line)));
             slide.setTitle(title);
             return slide;

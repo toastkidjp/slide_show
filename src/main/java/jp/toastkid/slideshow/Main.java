@@ -8,9 +8,12 @@ import org.slf4j.LoggerFactory;
 
 import javafx.application.Application;
 import javafx.collections.ObservableMap;
+import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -85,15 +88,17 @@ public class Main extends Application {
         }
 
         readSlides();
-        slides.forEach(slide -> {
-            final ObservableMap<KeyCombination,Runnable> accelerators = slide.getAccelerators();
-            accelerators.put(FULL_SCREEN_KEY, () -> stage.setFullScreen(true));
-            accelerators.put(BACK_1,    this::back);
-            accelerators.put(BACK_2,    this::back);
-            accelerators.put(FORWARD_1, this::forward);
-            accelerators.put(FORWARD_2, this::forward);
-        });
-        stage.setScene(slides.get(0));
+        final Pane root = new StackPane();
+        root.getChildren().addAll(slides);
+        slides.get(0).setVisible(true);
+        final Scene scene = new Scene(root);
+        final ObservableMap<KeyCombination,Runnable> accelerators = scene.getAccelerators();
+        accelerators.put(FULL_SCREEN_KEY, () -> stage.setFullScreen(true));
+        accelerators.put(BACK_1,    this::back);
+        accelerators.put(BACK_2,    this::back);
+        accelerators.put(FORWARD_1, this::forward);
+        accelerators.put(FORWARD_2, this::forward);
+        stage.setScene(scene);
         stage.showAndWait();
     }
 
@@ -101,28 +106,43 @@ public class Main extends Application {
      * Back slide.
      */
     private void back() {
-        if (0 < current) {
-            current--;
-        }
-        stage.setScene(slides.get(current));
+        moveTo(current - 1);
     }
 
     /**
      * Forward slide.
      */
     private void forward() {
-        if (current < slides.size() - 1) {
-            current++;
+        moveTo(current + 1);
+    }
+
+    /**
+     * Move to specified index slide.
+     * @param index
+     */
+    private void moveTo(final int index) {
+        if (index < 0 || slides.size() <= index) {
+            return;
         }
-        //stage.setScene(slides.get(current));
-        stage.getScene().setRoot(slides.get(current).getRoot());
+        slides.get(current).setVisible(false);
+        current = index;
+        move();
+    }
+
+    /**
+     * Move new slide.
+     */
+    private void move() {
+        //stage.getScene().getRoot().getChildrenUnmodifiable()
+
+        slides.get(current).setVisible(true);
     }
 
     /**
      * Read slides.
      */
     private void readSlides() {
-        final Slide title  = TitleSlide.Factory.make("My First\n Presentation.");
+        final Slide title  = TitleSlide.Factory.make("My First\n Presentation.", "Toast kid(@y_q1m)");
         final Slide first  = Slide.Factory.make("My First Slide",  "Line 1", "Line 2", "Line 3");
         final Slide second = Slide.Factory.make("My Second Slide", "Line 1", "Line 2", "Line 3");
         final Slide eop    = TitleSlide.Factory.make("Thank you for\n your kindness.", "EOP");

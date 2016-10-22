@@ -11,7 +11,10 @@ import javafx.scene.text.Font;
 public class TitleSlide extends Slide {
 
     /** Title label's font. */
-    private static final Font TITLE_FONT = new Font(300);
+    private static final Font TITLE_FONT = new Font(200);
+
+    /** Title label's font. */
+    private static final Font SUB_FONT   = new Font(100);
 
     @Override
     protected void initTitle() {
@@ -44,7 +47,9 @@ public class TitleSlide extends Slide {
          */
         public static Slide make(final String title, final String text) {
             final Slide slide = make(title);
-            slide.addContents(new Label(text));
+            final Label sub = new Label(text);
+            sub.setFont(SUB_FONT);
+            slide.addContents(sub);
             return slide;
         }
     }
