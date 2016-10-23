@@ -28,7 +28,7 @@ public class Slide extends VBox {
      * Constructor.
      */
     public Slide() {
-        title = new Label("Title");
+        title = new Label();
         initTitle();
         contents = new VBox();
         this.setVisible(false);
@@ -40,6 +40,7 @@ public class Slide extends VBox {
      */
     protected void initTitle() {
         title.setFont(HEAD_FONT);
+        title.setWrapText(true);
     }
 
     /**
@@ -78,6 +79,14 @@ public class Slide extends VBox {
             return slide;
         }
 
+    }
+
+    /**
+     * Return has title in this slide.
+     * @return
+     */
+    public boolean hasTitle() {
+        return title.getText().length() != 0;
     }
 
 

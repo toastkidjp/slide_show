@@ -24,6 +24,7 @@ public class LineFactory {
     public static Label normal(final String text) {
         final Label line = new Label(text);
         line.setFont(LINE_FONT);
+        line.setWrapText(true);
         return line;
     }
 
@@ -34,6 +35,17 @@ public class LineFactory {
      */
     public static Node centering(final Node n) {
         final HBox forCentering = new HBox(n);
+        forCentering.setAlignment(Pos.CENTER);
+        return forCentering;
+    }
+
+    /**
+     * Return centered label.
+     * @param n Node
+     * @return
+     */
+    public static Node centeredText(final String text) {
+        final HBox forCentering = new HBox(normal(text));
         forCentering.setAlignment(Pos.CENTER);
         return forCentering;
     }

@@ -1,8 +1,8 @@
 package jp.toastkid.slideshow;
 
+import java.nio.file.Paths;
 import java.util.List;
 
-import org.eclipse.collections.impl.factory.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +20,8 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import jp.toastkid.slideshow.converter.WikiToSlides;
 import jp.toastkid.slideshow.slide.Slide;
-import jp.toastkid.slideshow.slide.TitleSlide;
 
 /**
  * Simple presentation tool powered by JavaFX.
@@ -179,8 +179,6 @@ public class Main extends Application {
      * Move new slide.
      */
     private void move() {
-        //stage.getScene().getRoot().getChildrenUnmodifiable()
-
         slides.get(current).setVisible(true);
     }
 
@@ -188,11 +186,7 @@ public class Main extends Application {
      * Read slides.
      */
     private void readSlides() {
-        final Slide title  = TitleSlide.Factory.make("My First\n Presentation.", "Toast kid(@y_q1m)");
-        final Slide first  = Slide.Factory.make("My First Slide",  "Line 1", "Line 2", "Line 3");
-        final Slide second = Slide.Factory.make("My Second Slide", "Line 1", "Line 2", "Line 3");
-        final Slide eop    = TitleSlide.Factory.make("Thank you for\n your kindness.", "EOP");
-        slides = Lists.mutable.of(title, first, second, eop);
+        slides = new WikiToSlides(Paths.get("sample.txt")).convert();
     }
 
     @Override

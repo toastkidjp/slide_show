@@ -18,6 +18,7 @@ public class TitleSlide extends Slide {
 
     @Override
     protected void initTitle() {
+        super.initTitle();
         title.setFont(TITLE_FONT);
     }
 
