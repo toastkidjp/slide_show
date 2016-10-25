@@ -1,5 +1,6 @@
 package jp.toastkid.slideshow.slide;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 
@@ -15,6 +16,14 @@ public class TitleSlide extends Slide {
 
     /** Title label's font. */
     private static final Font SUB_FONT   = new Font(100);
+
+    /**
+     * Centering text.
+     */
+    public TitleSlide() {
+        super();
+        this.setAlignment(Pos.CENTER);
+    }
 
     @Override
     protected void initTitle() {

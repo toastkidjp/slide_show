@@ -6,16 +6,23 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jfoenix.controls.JFXProgressBar;
+
 import javafx.application.Application;
 import javafx.collections.ObservableMap;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -63,6 +70,12 @@ public class Main extends Application {
     /** Current slide index. */
     private int current;
 
+    /** Progress bar. */
+    private JFXProgressBar jfxProgressBar;
+
+    /** Progress indicator. */
+    private Label indicator;
+
     /**
      * Constructor.
      */
@@ -89,27 +102,29 @@ public class Main extends Application {
     }
 
     /**
-     * show this app with passed stage.
-     * @param owner
+     * show this app.
+     * @param filePath
      */
-    public void show(final Stage owner) {
-        this.stage.getScene().getStylesheets().addAll(owner.getScene().getStylesheets());
-        this.stage.initOwner(owner);
-        show();
+    public void show(final String filePath) {
+        show(null, filePath);
     }
 
     /**
-     * show this app.
+     * Show this app with passed stage.
+     *
+     * @param owner
      */
-    public void show() {
-        if (stage.getOwner() == null) {
-            stage.setOnCloseRequest(event -> System.exit(0));
-        }
-
-        readSlides();
+    public void show(final Stage owner, final String filePath) {
+        readSlides(filePath);
         final Scene scene = new Scene(loadRootPane());
         putAccelerators(scene);
         stage.setScene(scene);
+        if (owner == null) {
+            this.stage.setOnCloseRequest(event -> System.exit(0));
+        } else {
+            this.stage.initOwner(owner);
+        }
+        this.stage.setFullScreen(true);
         stage.showAndWait();
     }
 
@@ -144,8 +159,25 @@ public class Main extends Application {
     private Pane loadRootPane() {
         final Pane root = new StackPane();
         root.getChildren().addAll(slides);
-        slides.get(0).setVisible(true);
+        initProgressBox(root);
+        move();
         return root;
+    }
+
+    /**
+     * Initialize progress bar and indicator.
+     * @param root
+     */
+    private void initProgressBox(final Pane root) {
+        indicator = new Label();
+        indicator.setFont(Font.font(40));
+        final HBox indicatorBox = new HBox(indicator);
+        indicatorBox.setAlignment(Pos.CENTER_RIGHT);
+        jfxProgressBar = new JFXProgressBar(0);
+        jfxProgressBar.setPrefWidth(Screen.getPrimary().getBounds().getWidth());
+        final VBox barBox = new VBox(indicatorBox, jfxProgressBar);
+        barBox.setAlignment(Pos.BOTTOM_CENTER);
+        root.getChildren().add(barBox);
     }
 
     /**
@@ -180,18 +212,22 @@ public class Main extends Application {
      */
     private void move() {
         slides.get(current).setVisible(true);
+        final int i = current + 1;
+        indicator.setText(String.format("%d / %d", i, slides.size()));
+        jfxProgressBar.setProgress((double) i / (double) slides.size());
     }
 
     /**
      * Read slides.
+     * @param filePath path/to/file
      */
-    private void readSlides() {
-        slides = new WikiToSlides(Paths.get("sample.txt")).convert();
+    private void readSlides(final String filePath) {
+        slides = new WikiToSlides(Paths.get(filePath)).convert();
     }
 
     @Override
     public void start(final Stage stage) throws Exception {
-        show();
+        show("sample.txt");
     }
 
     /**

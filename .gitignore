@@ -1,6 +1,6 @@
 *.txt
 *.lnk
-Jitte-*.jar
+*.jar
 temp.html
 md.html
 logs/

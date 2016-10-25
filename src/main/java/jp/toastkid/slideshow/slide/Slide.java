@@ -2,11 +2,15 @@ package jp.toastkid.slideshow.slide;
 
 import org.eclipse.collections.impl.utility.ArrayIterate;
 
+import com.jfoenix.controls.JFXProgressBar;
+
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.stage.Screen;
 
 /**
  * Slide implementation.
@@ -23,6 +27,9 @@ public class Slide extends VBox {
 
     /** Contents. */
     protected final Pane contents;
+
+    /** Has background image. */
+    private boolean hasBgImage;
 
     /**
      * Constructor.
@@ -60,6 +67,50 @@ public class Slide extends VBox {
     }
 
     /**
+     * Set background image.
+     * @param n Node
+     * @param image url
+     */
+    public void setBgImage(final String image) {
+        setStyle(
+                "-fx-background-image: url('" + image + "'); " +
+                "-fx-background-position: center center; " +
+                "-fx-background-repeat: stretch;"
+        );
+        hasBgImage = true;
+    }
+
+    /**
+     * Return has title in this slide.
+     * @return
+     */
+    public boolean hasTitle() {
+        return title.getText().length() != 0;
+    }
+
+    /**
+     * Return this has background image.
+     * @return
+     */
+    public boolean hasBgImage() {
+        return hasBgImage;
+    }
+
+    /**
+     * Set indicator.
+     * @param index
+     * @param maxPages
+     */
+    public void setIndicator(final int index, final int maxPages) {
+        final double progress = (double) index / (double) maxPages;
+        final JFXProgressBar jfxProgressBar = new JFXProgressBar(progress);
+        jfxProgressBar.setPrefWidth(Screen.getPrimary().getBounds().getWidth());
+        final VBox barBox = new VBox(jfxProgressBar);
+        barBox.setAlignment(Pos.BOTTOM_CENTER);
+        this.getChildren().add(barBox);
+    }
+
+    /**
      * Factory of Slide.
      * @author Toast kid
      *
@@ -80,14 +131,5 @@ public class Slide extends VBox {
         }
 
     }
-
-    /**
-     * Return has title in this slide.
-     * @return
-     */
-    public boolean hasTitle() {
-        return title.getText().length() != 0;
-    }
-
 
 }
