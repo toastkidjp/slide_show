@@ -1,4 +1,5 @@
 apply plugin: 'application'
+apply plugin: 'eclipse'
 
 mainClassName   = 'jp.toastkid.slideshow.Main'
 
@@ -33,8 +34,13 @@ compileJava {
 }
 
 run {
-    classpath += configurations.runtime
     classpath += configurations.provided
+}
+
+eclipse {
+    classpath {
+        plusConfigurations += [ configurations.provided ]
+    }
 }
 
 jar {
