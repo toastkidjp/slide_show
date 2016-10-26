@@ -1,6 +1,7 @@
 *.txt
 *.lnk
 *.jar
+*.pdf
 temp.html
 md.html
 logs/

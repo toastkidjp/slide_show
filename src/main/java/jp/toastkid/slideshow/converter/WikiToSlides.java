@@ -45,8 +45,8 @@ public class WikiToSlides {
      * Convert to Slides.
      * @return List&lt;Slide&gt;
      */
-    public List<Slide> convert() {
-        final List<Slide> slides = Lists.mutable.empty();
+    public MutableList<Slide> convert() {
+        final MutableList<Slide> slides = Lists.mutable.empty();
         try (final Stream<String> lines = Files.lines(p)) {
             final MutableList<String> texts = Lists.mutable.empty();
             lines.forEach(line -> {

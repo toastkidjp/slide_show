@@ -12,21 +12,29 @@ repositories {
     jcenter()
 }
 
+configurations {
+    provided
+}
+
 dependencies {
-    compile 'com.jfoenix:jfoenix:1.0.0'
-    compile 'org.slf4j:slf4j-api:1.7.21'
-    compile 'org.slf4j:slf4j-log4j12:1.7.21'
-    compile 'org.eclipse.collections:eclipse-collections:8.0.0-M1'
-    compile 'io.projectreactor:reactor-core:3.0.2.RELEASE'
+    provided 'com.jfoenix:jfoenix:1.0.0'
+    provided 'org.slf4j:slf4j-api:1.7.21'
+    provided 'org.slf4j:slf4j-log4j12:1.7.21'
+    provided 'org.eclipse.collections:eclipse-collections:8.0.0-M1'
+    provided 'io.projectreactor:reactor-core:3.0.2.RELEASE'
+    compile 'org.apache.pdfbox:pdfbox:2.0.3'
+    compile 'commons-logging:commons-logging:1.2'
     testCompile 'junit:junit:4.12'
 }
 
 compileJava {
+    sourceSets.main.compileClasspath += configurations.provided
     sourceSets.main.compileClasspath += configurations.testCompile
 }
 
 run {
     classpath += configurations.runtime
+    classpath += configurations.provided
 }
 
 jar {
@@ -41,6 +49,6 @@ task excludedJar(type: Jar) {
     baseName = rootProject.name + "_excluded"
     destinationDir = projectDir
     from sourceSets.main.output
-    exclude('com/jfoenix/**')
-    exclude('io/**')
+    //exclude('com/jfoenix/**')
+    //exclude('io/**')
 }

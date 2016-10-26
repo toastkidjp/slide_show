@@ -1,8 +1,16 @@
 package jp.toastkid.slideshow;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.List;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
+import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.impl.list.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +48,9 @@ public class Main extends Application {
     /** Logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
+    /** PDF file name. */
+    private static final String DEFAULT_PDF_FILE_NAME = "slide.pdf";
+
     /** Title of this app. */
     private static final String TITLE = "Slide show";
 
@@ -59,13 +70,17 @@ public class Main extends Application {
     private static final KeyCodeCombination FORWARD_2 = new KeyCodeCombination(KeyCode.RIGHT);
 
     /** Quit key. */
+    private static final KeyCodeCombination SAVE
+        = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN);
+
+    /** Quit key. */
     private static final KeyCodeCombination QUIT = new KeyCodeCombination(KeyCode.ESCAPE);
 
     /** This app's Stage. */
     private final Stage stage;
 
     /** Slides. */
-    private List<Slide> slides;
+    private MutableList<Slide> slides;
 
     /** Current slide index. */
     private int current;
@@ -129,6 +144,35 @@ public class Main extends Application {
     }
 
     /**
+     * Generate PDF file.
+     */
+    private void generatePdf() {
+        final long start = System.currentTimeMillis();
+        LOGGER.info("Start generating PDF.");
+        try (final PDDocument doc = new PDDocument()) {
+            final int width  = (int) stage.getWidth();
+            final int height = (int) stage.getHeight();
+            Interval.zeroTo(slides.size() - 1).each(i ->{
+                moveTo(i);
+                final long istart = System.currentTimeMillis();
+                final PDPage page = new PDPage(new PDRectangle(width, height));
+                try (final PDPageContentStream content = new PDPageContentStream(doc, page)) {
+                    content.drawImage(LosslessFactory.createFromImage(
+                            doc, slides.get(i).generateImage(width, height)), 0, 0);
+                } catch(final IOException ie) {
+                    LOGGER.error("Occurred Error!", ie);
+                }
+                doc.addPage(page);
+                LOGGER.info("Ended page. {}[ms]", System.currentTimeMillis() - istart);
+            });
+            doc.save(new File(DEFAULT_PDF_FILE_NAME));
+        } catch(final IOException ie) {
+            LOGGER.error("Occurred Error!", ie);
+        }
+        LOGGER.info("Ended generating PDF. {}[ms]", System.currentTimeMillis() - start);
+    }
+
+    /**
      * Put accelerators.
      * @param scene
      */
@@ -139,6 +183,7 @@ public class Main extends Application {
         accelerators.put(BACK_2,    this::back);
         accelerators.put(FORWARD_1, this::forward);
         accelerators.put(FORWARD_2, this::forward);
+        accelerators.put(SAVE,      this::generatePdf);
         accelerators.put(QUIT,      this::quit);
     }
 
@@ -160,7 +205,7 @@ public class Main extends Application {
         final Pane root = new StackPane();
         root.getChildren().addAll(slides);
         initProgressBox(root);
-        move();
+        move(false);
         return root;
     }
 
@@ -202,16 +247,26 @@ public class Main extends Application {
         if (index < 0 || slides.size() <= index) {
             return;
         }
-        slides.get(current).setVisible(false);
+
+        final Slide slide = slides.get(current);
+        final boolean isForward = current < index;
+        slide.setVisible(false);
         current = index;
-        move();
+        move(isForward);
     }
 
     /**
      * Move new slide.
+     * @param isForward
      */
-    private void move() {
-        slides.get(current).setVisible(true);
+    private void move(final boolean isForward) {
+        final Slide slide = slides.get(current);
+        slide.setVisible(true);
+        if (isForward) {
+            slide.rightIn();
+        } else {
+            slide.leftIn();
+        }
         final int i = current + 1;
         indicator.setText(String.format("%d / %d", i, slides.size()));
         jfxProgressBar.setProgress((double) i / (double) slides.size());

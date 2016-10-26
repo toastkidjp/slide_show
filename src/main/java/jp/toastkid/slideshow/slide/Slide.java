@@ -1,16 +1,24 @@
 package jp.toastkid.slideshow.slide;
 
+import java.awt.image.BufferedImage;
+
 import org.eclipse.collections.impl.utility.ArrayIterate;
 
 import com.jfoenix.controls.JFXProgressBar;
 
+import javafx.animation.Interpolator;
+import javafx.animation.TranslateTransition;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Label;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
+import javafx.util.Duration;
 
 /**
  * Slide implementation.
@@ -18,6 +26,9 @@ import javafx.stage.Screen;
  * @author Toast kid
  */
 public class Slide extends VBox {
+
+    /** Slide duration. */
+    private static final Duration TRANSITION_DURATION = Duration.seconds(0.3d);
 
     /** Header text font. */
     private static final Font HEAD_FONT = new Font(150);
@@ -108,6 +119,42 @@ public class Slide extends VBox {
         final VBox barBox = new VBox(jfxProgressBar);
         barBox.setAlignment(Pos.BOTTOM_CENTER);
         this.getChildren().add(barBox);
+    }
+
+    /**
+     * Generate image.
+     * @param width image's width
+     * @param height image's height
+     * @return BufferedImage
+     */
+    public BufferedImage generateImage(final int width, final int height) {
+        final WritableImage image = new WritableImage(width, height);
+        this.snapshot(new SnapshotParameters(), image);
+        return SwingFXUtils.fromFXImage(image, null);
+    }
+
+    /**
+     * Animate slide to next.
+     */
+    public void leftIn() {
+        final TranslateTransition back = new TranslateTransition(TRANSITION_DURATION, this);
+        back.setFromX(-2000);
+        back.setToX(0);
+        back.setInterpolator(Interpolator.LINEAR);
+        back.setCycleCount(1);
+        back.play();
+    }
+
+    /**
+     * Animate slide to next.
+     */
+    public void rightIn() {
+        final TranslateTransition next = new TranslateTransition(TRANSITION_DURATION, this);
+        next.setFromX(2000);
+        next.setToX(0);
+        next.setInterpolator(Interpolator.LINEAR);
+        next.setCycleCount(1);
+        next.play();
     }
 
     /**
