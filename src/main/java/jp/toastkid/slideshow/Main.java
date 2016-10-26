@@ -18,6 +18,7 @@ import com.jfoenix.controls.JFXProgressBar;
 
 import javafx.application.Application;
 import javafx.collections.ObservableMap;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -70,6 +71,10 @@ public class Main extends Application {
     private static final KeyCodeCombination FORWARD_2 = new KeyCodeCombination(KeyCode.RIGHT);
 
     /** Quit key. */
+    private static final KeyCodeCombination SUB
+        = new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN);
+
+    /** Quit key. */
     private static final KeyCodeCombination SAVE
         = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN);
 
@@ -91,6 +96,12 @@ public class Main extends Application {
     /** Progress indicator. */
     private Label indicator;
 
+    /** SubMenu's pane */
+    private Pane subPane;
+
+    /** fxml file. */
+    private static final String FXML_PATH = "scenes/SubMenu.fxml";
+
     /**
      * Constructor.
      */
@@ -99,7 +110,43 @@ public class Main extends Application {
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setTitle(TITLE);
         stage.setOnCloseRequest(event -> stage.close());
+
+        initSubMenu();
+
         maximizeStage();
+    }
+
+    /**
+     * Initialize SubMenu.
+     */
+    private void initSubMenu() {
+        final SubMenuController controller = readSub();
+        subPane = controller.getRoot();
+        subPane.setStyle("-fx-background-color: #EEEEEE;"
+                + "-fx-effect: dropshadow(three-pass-box, #000033, 10, 0, 0, 0);");
+        subPane.setManaged(false);
+        controller.setOnGeneratePdf(this::generatePdf);
+        controller.setOnHide(this::hideSubMenu);
+        controller.setOnQuit(this::quit);
+        controller.setOnBack(this::back);
+        controller.setOnForward(this::forward);
+        controller.setOnMoveTo(this::moveTo);
+    }
+
+    /**
+     * Init submenu controller.
+     * @return Controller
+     */
+    private final SubMenuController readSub() {
+        try {
+            final FXMLLoader loader
+                = new FXMLLoader(getClass().getClassLoader().getResource(FXML_PATH));
+            loader.load();
+            return (SubMenuController) loader.getController();
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -183,17 +230,42 @@ public class Main extends Application {
         accelerators.put(BACK_2,    this::back);
         accelerators.put(FORWARD_1, this::forward);
         accelerators.put(FORWARD_2, this::forward);
+        accelerators.put(SUB,       this::switchSubMenu);
         accelerators.put(SAVE,      this::generatePdf);
         accelerators.put(QUIT,      this::quit);
     }
 
     /**
-     * If this screen is not full screen, This app will close.
+     * Switch SubMenu visibility.
+     */
+    private void switchSubMenu() {
+        if (subPane.isManaged()) {
+            hideSubMenu();
+        } else {
+            showSubMenu();
+        }
+    }
+
+    /**
+     * Hide subMenu.
+     */
+    private void hideSubMenu() {
+        subPane.setManaged(false);
+        subPane.setVisible(false);
+    }
+
+    /**
+     * Show subMenu.
+     */
+    private void showSubMenu() {
+        subPane.setManaged(true);
+        subPane.setVisible(true);
+    }
+
+    /**
+     * This app close.
      */
     private void quit() {
-        if (stage.isFullScreen()) {
-            return;
-        }
         stage.close();
     }
 
@@ -205,6 +277,7 @@ public class Main extends Application {
         final Pane root = new StackPane();
         root.getChildren().addAll(slides);
         initProgressBox(root);
+        root.getChildren().add(subPane);
         move(false);
         return root;
     }

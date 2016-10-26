@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXSlider?>
+
+<?import jp.toastkid.slideshow.control.Stopwatch ?>
+
+<VBox alignment="BOTTOM_CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
+    minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="600.0"
+    xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="jp.toastkid.slideshow.SubMenuController"
+    fx:id="root"
+    >
+   <children>
+      <HBox alignment="CENTER" prefHeight="32.0" prefWidth="600.0">
+         <children>
+            <JFXButton onAction="#back" mnemonicParsing="false" text="&lt;" />
+            <JFXButton onAction="#forward" mnemonicParsing="false" text="&gt;">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </JFXButton>
+            <JFXSlider fx:id="indexSlider" prefHeight="18.0" prefWidth="255.0">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </JFXSlider>
+            <JFXTextField fx:id="indexInput" prefHeight="30.0" prefWidth="105.0" onAction="#moveToWithText"/>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="28.0" prefWidth="600.0">
+         <children>
+            <Stopwatch fx:id="stopwatch" />
+            <JFXButton onAction="#generatePdf" text="PDF">
+               <HBox.margin>
+                  <Insets left="30.0" />
+               </HBox.margin>
+            </JFXButton>
+            <JFXButton text="Overview">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </JFXButton>
+            <JFXButton onAction="#hide" text="Hide">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </JFXButton>
+            <JFXButton onAction="#quit" text="Quit">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </JFXButton>
+         </children>
+         <VBox.margin>
+            <Insets top="20.0" />
+         </VBox.margin>
+      </HBox>
+   </children>
+</VBox>
