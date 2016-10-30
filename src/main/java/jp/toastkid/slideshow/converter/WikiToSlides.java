@@ -12,6 +12,8 @@ import java.util.stream.Stream;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.utility.ArrayIterate;
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
 
 import jp.toastkid.slideshow.slide.LineFactory;
 import jp.toastkid.slideshow.slide.Slide;
@@ -23,6 +25,8 @@ import jp.toastkid.slideshow.slide.TitleSlide;
  * @author Toast kid
  */
 public class WikiToSlides {
+
+    private static final String LINE_SEPARATOR = System.lineSeparator();
 
     /** Source's path */
     private final Path p;
@@ -41,6 +45,9 @@ public class WikiToSlides {
     /** Slide. */
     private Slide s = new TitleSlide();
 
+    /** Code block processing. */
+    private boolean isInCodeBlock = false;
+
     /**
      * Convert to Slides.
      * @return List&lt;Slide&gt;
@@ -49,6 +56,7 @@ public class WikiToSlides {
         final MutableList<Slide> slides = Lists.mutable.empty();
         try (final Stream<String> lines = Files.lines(p)) {
             final MutableList<String> texts = Lists.mutable.empty();
+            final StringBuilder code = new StringBuilder();
             lines.forEach(line -> {
                 if (line.startsWith("*")) {
                     if (s.hasTitle()) {
@@ -64,6 +72,25 @@ public class WikiToSlides {
                     Optional.ofNullable(extractImageUrl(line)).ifPresent(image -> s.setBgImage(image));
                     return;
                 }
+                // Adding code block.
+                if (line.startsWith("```")) {
+                    isInCodeBlock = !isInCodeBlock;
+                    if (!isInCodeBlock && code.length() != 0) {
+                        final CodeArea codeArea = new CodeArea();
+                        codeArea.setEditable(false);
+                        codeArea.setStyle("-fx-font-size: 40pt;");
+                        codeArea.replaceText(code.toString());
+                        codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+                        s.addContents(codeArea);
+                        code.setLength(0);
+                    }
+                    return;
+                }
+                if (isInCodeBlock && !line.startsWith("```")) {
+                    code.append(code.length() != 0 ? LINE_SEPARATOR : "").append(line);
+                    return;
+                }
+                // Not code.
                 texts.add(line);
             });
             addSlide(slides, texts);
