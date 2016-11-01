@@ -108,6 +108,9 @@ public class Main extends Application {
     /** fxml file. */
     private static final String FXML_PATH = "scenes/SubMenu.fxml";
 
+    /** Controller object. */
+    private SubMenuController controller;
+
     /**
      * Constructor.
      */
@@ -126,7 +129,7 @@ public class Main extends Application {
      * Initialize SubMenu.
      */
     private void initSubMenu() {
-        final SubMenuController controller = readSub();
+        controller = readSub();
         subPane = controller.getRoot();
         subPane.setStyle("-fx-background-color: #EEEEEE;"
                 + "-fx-effect: dropshadow(three-pass-box, #000033, 10, 0, 0, 0);");
@@ -269,6 +272,7 @@ public class Main extends Application {
     private void showSubMenu() {
         subPane.setManaged(true);
         subPane.setVisible(true);
+        controller.setFocus();
     }
 
     /**
@@ -363,6 +367,7 @@ public class Main extends Application {
      */
     private void readSlides(final String filePath) {
         slides = new WikiToSlides(Paths.get(filePath)).convert();
+        controller.setRange(1, slides.size());
     }
 
     @Override

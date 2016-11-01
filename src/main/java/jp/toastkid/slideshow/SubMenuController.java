@@ -101,7 +101,7 @@ public class SubMenuController {
             return;
         }
         final int index = Integer.parseInt(text);
-        moveTo.accept(index);
+        moveTo.accept(index - 1);
     }
 
     /**
@@ -168,6 +168,25 @@ public class SubMenuController {
     }
 
     /**
+     * Set min and max value.
+     * @param min
+     * @param max
+     * @param index
+     */
+    public void setRange(final int min, final int max) {
+        indexSlider.setMin(min);
+        indexSlider.setMax(max);
+        indexSlider.setBlockIncrement(1.0d);
+        indexSlider.setMajorTickUnit(1.0d);
+        indexSlider.setShowTickMarks(true);
+        indexSlider.setShowTickLabels(true);
+        indexSlider.setValue(min);
+        indexSlider.valueProperty().addListener((prev, next, val) -> {
+            indexInput.setText(Integer.toString(val.intValue()));
+            moveToWithText();
+        });
+    }
+    /**
      * Set on hide subMenu.
      * @param hide
      */
@@ -181,6 +200,10 @@ public class SubMenuController {
      */
     public Pane getRoot() {
         return root;
+    }
+
+    public void setFocus() {
+        indexInput.requestFocus();
     }
 
 }
