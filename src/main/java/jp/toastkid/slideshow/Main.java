@@ -198,7 +198,7 @@ public class Main extends Application {
         } else {
             this.stage.initOwner(owner);
         }
-        //this.stage.setFullScreen(true);
+        this.stage.setFullScreen(true);
         stage.showAndWait();
     }
 
