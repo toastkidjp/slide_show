@@ -15,6 +15,7 @@ import org.eclipse.collections.impl.utility.ArrayIterate;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
+import jp.toastkid.script.highlight.SimpleHighlighter;
 import jp.toastkid.slideshow.slide.LineFactory;
 import jp.toastkid.slideshow.slide.Slide;
 import jp.toastkid.slideshow.slide.TitleSlide;
@@ -77,10 +78,14 @@ public class WikiToSlides {
                     isInCodeBlock = !isInCodeBlock;
                     if (!isInCodeBlock && code.length() != 0) {
                         final CodeArea codeArea = new CodeArea();
+                        new SimpleHighlighter(codeArea, "fx.txt", "keywords/groovy.txt")
+                            .highlight();
                         codeArea.setEditable(false);
                         codeArea.setStyle("-fx-font-size: 40pt;");
                         codeArea.replaceText(code.toString());
                         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+                        final int height = code.toString().split(LINE_SEPARATOR).length * 60;
+                        codeArea.setMinHeight(height);
                         s.addContents(codeArea);
                         code.setLength(0);
                     }

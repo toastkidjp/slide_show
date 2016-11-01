@@ -185,6 +185,7 @@ public class Main extends Application {
     public void show(final Stage owner, final String filePath) {
         readSlides(filePath);
         final Scene scene = new Scene(loadRootPane());
+        scene.getStylesheets().add(getClass().getClassLoader().getResource("keywords.css").toExternalForm());
         putAccelerators(scene);
         stage.setScene(scene);
         if (owner == null) {
@@ -275,6 +276,9 @@ public class Main extends Application {
      */
     private void quit() {
         stage.close();
+        if (stage.getOwner() == null) {
+            System.exit(0);
+        }
     }
 
     /**
