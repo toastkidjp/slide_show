@@ -6,6 +6,7 @@ import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.NumberValidator;
 
+import javafx.beans.property.IntegerProperty;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import jp.toastkid.slideshow.control.Stopwatch;
@@ -101,7 +102,7 @@ public class SubMenuController {
             return;
         }
         final int index = Integer.parseInt(text);
-        moveTo.accept(index - 1);
+        moveTo.accept(index);
     }
 
     /**
@@ -171,9 +172,10 @@ public class SubMenuController {
      * Set min and max value.
      * @param min
      * @param max
+     * @param current
      * @param index
      */
-    public void setRange(final int min, final int max) {
+    public void setRange(final int min, final int max, final IntegerProperty current) {
         indexSlider.setMin(min);
         indexSlider.setMax(max);
         indexSlider.setBlockIncrement(1.0d);
@@ -181,10 +183,13 @@ public class SubMenuController {
         indexSlider.setShowTickMarks(true);
         indexSlider.setShowTickLabels(true);
         indexSlider.setValue(min);
+        ///*
         indexSlider.valueProperty().addListener((prev, next, val) -> {
-            indexInput.setText(Integer.toString(val.intValue()));
             moveToWithText();
         });
+        //*/
+        indexSlider.valueProperty().bindBidirectional(current);
+        indexInput.textProperty().bind(current.asString());
     }
     /**
      * Set on hide subMenu.

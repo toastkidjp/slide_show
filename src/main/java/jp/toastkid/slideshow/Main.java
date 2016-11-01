@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import com.jfoenix.controls.JFXProgressBar;
 
 import javafx.application.Application;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.BoundingBox;
@@ -87,6 +89,9 @@ public class Main extends Application {
     /** Quit key. */
     private static final KeyCodeCombination QUIT = new KeyCodeCombination(KeyCode.ESCAPE);
 
+    /** fxml file. */
+    private static final String FXML_PATH = "scenes/SubMenu.fxml";
+
     /** This app's Stage. */
     private final Stage stage;
 
@@ -94,7 +99,7 @@ public class Main extends Application {
     private MutableList<Slide> slides;
 
     /** Current slide index. */
-    private int current;
+    private IntegerProperty current;
 
     /** Progress bar. */
     private JFXProgressBar jfxProgressBar;
@@ -104,9 +109,6 @@ public class Main extends Application {
 
     /** SubMenu's pane */
     private Pane subPane;
-
-    /** fxml file. */
-    private static final String FXML_PATH = "scenes/SubMenu.fxml";
 
     /** Controller object. */
     private SubMenuController controller;
@@ -196,7 +198,7 @@ public class Main extends Application {
         } else {
             this.stage.initOwner(owner);
         }
-        this.stage.setFullScreen(true);
+        //this.stage.setFullScreen(true);
         stage.showAndWait();
     }
 
@@ -318,14 +320,14 @@ public class Main extends Application {
      * Back slide.
      */
     private void back() {
-        moveTo(current - 1);
+        moveTo(current.get() - 1);
     }
 
     /**
      * Forward slide.
      */
     private void forward() {
-        moveTo(current + 1);
+        moveTo(current.get() + 1);
     }
 
     /**
@@ -333,14 +335,13 @@ public class Main extends Application {
      * @param index
      */
     private void moveTo(final int index) {
-        if (index < 0 || slides.size() <= index) {
+        if (index <= 0 || slides.size() < index) {
             return;
         }
 
-        final Slide slide = slides.get(current);
-        final boolean isForward = current < index;
-        slide.setVisible(false);
-        current = index;
+        slides.stream().filter(s -> s.isVisible()).forEach(s -> s.setVisible(false));
+        final boolean isForward = current.get() < index;
+        current.set(index);
         move(isForward);
     }
 
@@ -349,14 +350,14 @@ public class Main extends Application {
      * @param isForward
      */
     private void move(final boolean isForward) {
-        final Slide slide = slides.get(current);
+        final Slide slide = slides.get(current.get() - 1);
         slide.setVisible(true);
         if (isForward) {
             slide.rightIn();
         } else {
             slide.leftIn();
         }
-        final int i = current + 1;
+        final int i = current.get();
         indicator.setText(String.format("%d / %d", i, slides.size()));
         jfxProgressBar.setProgress((double) i / (double) slides.size());
     }
@@ -367,7 +368,8 @@ public class Main extends Application {
      */
     private void readSlides(final String filePath) {
         slides = new WikiToSlides(Paths.get(filePath)).convert();
-        controller.setRange(1, slides.size());
+        current = new SimpleIntegerProperty(1);
+        controller.setRange(1, slides.size(), current);
     }
 
     @Override
