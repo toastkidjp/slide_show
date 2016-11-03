@@ -24,6 +24,9 @@ public class StyleManager {
      * @return path to css.
      */
     public static String findUri(final String s) {
+        if (s == null || s.length() == 0) {
+            return s;
+        }
         final URL resource = StyleManager.class.getResource("/css/slide/" + s.toLowerCase() + CSS);
         if (resource == null) {
             final File userDefined = new File(USER_DIR.toString(), s.toLowerCase() + CSS);
