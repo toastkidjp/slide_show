@@ -27,13 +27,26 @@ import jp.toastkid.slideshow.slide.TitleSlide;
  */
 public class WikiToSlides {
 
+    /** System line separator. */
     private static final String LINE_SEPARATOR = System.lineSeparator();
+
+    /** Background image pattern. */
+    private static final Pattern BACKGROUND = Pattern.compile("\\{background:(.+?)\\}");
+
+    /** CSS specifying pattern. */
+    private static final Pattern CSS = Pattern.compile("\\{css:(.+?)\\}");
 
     /** Source's path */
     private final Path p;
 
-    /** Background image pattern. */
-    private static final Pattern BACKGROUND = Pattern.compile("\\{background:(.+?)\\}");
+    /** Slide. */
+    private Slide s = new TitleSlide();
+
+    /** Code block processing. */
+    private boolean isInCodeBlock = false;
+
+    /** CSS title. */
+    private String css;
 
     /**
      * Init with source's path.
@@ -42,12 +55,6 @@ public class WikiToSlides {
     public WikiToSlides(final Path p) {
         this.p = p;
     }
-
-    /** Slide. */
-    private Slide s = new TitleSlide();
-
-    /** Code block processing. */
-    private boolean isInCodeBlock = false;
 
     /**
      * Convert to Slides.
@@ -84,7 +91,7 @@ public class WikiToSlides {
                         codeArea.setStyle("-fx-font-size: 40pt;");
                         codeArea.replaceText(code.toString());
                         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-                        final int height = code.toString().split(LINE_SEPARATOR).length * 60;
+                        final int height = code.toString().split(LINE_SEPARATOR).length * 80;
                         codeArea.setMinHeight(height);
                         s.addContents(codeArea);
                         code.setLength(0);
@@ -94,6 +101,13 @@ public class WikiToSlides {
                 if (isInCodeBlock && !line.startsWith("```")) {
                     code.append(code.length() != 0 ? LINE_SEPARATOR : "").append(line);
                     return;
+                }
+                if (line.startsWith("{css:")) {
+                    final Matcher matcher = CSS.matcher(line);
+                    if (matcher.find()) {
+                        css = matcher.group(1);
+                        return;
+                    }
                 }
                 // Not code.
                 texts.add(line);
@@ -134,5 +148,13 @@ public class WikiToSlides {
         return ArrayIterate.select(split, piece -> piece.startsWith("src="))
                            .collect(piece -> piece.substring("src=".length(), piece.length() - 1))
                            .getFirst();
+    }
+
+    /**
+     * Getter of css.
+     * @return
+     */
+    public String getCss() {
+        return css;
     }
 }

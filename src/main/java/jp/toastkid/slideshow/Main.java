@@ -42,6 +42,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import jp.toastkid.slideshow.converter.WikiToSlides;
 import jp.toastkid.slideshow.slide.Slide;
+import jp.toastkid.slideshow.style.StyleManager;
 
 /**
  * Simple presentation tool powered by JavaFX.
@@ -203,10 +204,13 @@ public class Main extends Application {
      * @param cssPath
      */
     public void show(final Stage owner, final String filePath, final String cssPath) {
-        readSlides(filePath);
+        final String cssUri = readSlides(filePath);
 
         final Scene scene = new Scene(loadRootPane());
-        applyStyle(scene, Paths.get(cssPath).toAbsolutePath().toString());
+        if (cssPath != null) {
+            applyStyle(scene, Paths.get(cssPath).toUri().toString());
+        }
+        Optional.ofNullable(cssUri).ifPresent(c -> applyStyle(scene, c));
         putAccelerators(scene);
         stage.setScene(scene);
 
@@ -215,21 +219,19 @@ public class Main extends Application {
         } else {
             this.stage.initOwner(owner);
         }
-        this.stage.setFullScreen(true);
+        //TODO this.stage.setFullScreen(true);
         stage.showAndWait();
     }
 
     /**
-     * Apply style with file path to scene.
+     * Apply style with file uri to scene.
      * @param scene
-     * @param cssPath
+     * @param cssUri
      */
-    private void applyStyle(final Scene scene, final String cssPath) {
+    private void applyStyle(final Scene scene, final String cssUri) {
         final ObservableList<String> stylesheets = scene.getStylesheets();
         stylesheets.add(getClass().getClassLoader().getResource("keywords.css").toExternalForm());
-        Optional.ofNullable(cssPath)
-                .map(str -> Paths.get(str).toUri().toString())
-                .ifPresent(stylesheets::add);
+        Optional.ofNullable(cssUri).ifPresent(stylesheets::add);
     }
 
     /**
@@ -395,16 +397,19 @@ public class Main extends Application {
     /**
      * Read slides.
      * @param filePath path/to/file
+     * @return css uri
      */
-    private void readSlides(final String filePath) {
-        slides = new WikiToSlides(Paths.get(filePath)).convert();
+    private String readSlides(final String filePath) {
+        final WikiToSlides reader = new WikiToSlides(Paths.get(filePath));
+        slides = reader.convert();
         current = new SimpleIntegerProperty(1);
         controller.setRange(1, slides.size(), current);
+        return StyleManager.findUri(reader.getCss());
     }
 
     @Override
     public void start(final Stage stage) throws Exception {
-        show(null, "sample.txt", "sample.css");
+        show(null, "sample.txt");
     }
 
     /**

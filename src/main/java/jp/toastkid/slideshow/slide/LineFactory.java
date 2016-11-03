@@ -23,6 +23,7 @@ public class LineFactory {
      */
     public static Label normal(final String text) {
         final Label line = new Label(text);
+        line.getStyleClass().add("line");
         line.setFont(LINE_FONT);
         line.setWrapText(true);
         return line;

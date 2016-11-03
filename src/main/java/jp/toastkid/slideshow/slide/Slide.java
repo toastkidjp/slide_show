@@ -59,6 +59,7 @@ public class Slide extends VBox {
     protected void initTitle() {
         title.setFont(HEAD_FONT);
         title.setWrapText(true);
+        title.getStyleClass().add("title");
     }
 
     /**

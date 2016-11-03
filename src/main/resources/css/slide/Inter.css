@@ -1,0 +1,23 @@
+.root {
+    -fx-background-color: rgba(0, 0, 100, 0.5);
+}
+
+.text {
+    -fx-font-family: 'Roboto';
+}
+
+.title {
+    -fx-font-size: 100pt
+}
+
+.line {
+    -fx-font-size: 60pt
+}
+
+.code-area {
+    -fx-font-size: 30pt
+}
+
+.label {
+    -fx-text-fill: white;
+}
