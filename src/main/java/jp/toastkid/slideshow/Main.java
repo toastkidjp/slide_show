@@ -3,6 +3,7 @@ package jp.toastkid.slideshow;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -19,6 +20,7 @@ import com.jfoenix.controls.JFXProgressBar;
 import javafx.application.Application;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.BoundingBox;
@@ -182,17 +184,32 @@ public class Main extends Application {
         show(null, filePath);
     }
 
+
     /**
      * Show this app with passed stage.
      *
      * @param owner
+     * @param filePath
      */
     public void show(final Stage owner, final String filePath) {
+        show(owner, filePath, null);
+    }
+
+    /**
+     * Show this app with passed stage.
+     *
+     * @param owner
+     * @param filePath
+     * @param cssPath
+     */
+    public void show(final Stage owner, final String filePath, final String cssPath) {
         readSlides(filePath);
+
         final Scene scene = new Scene(loadRootPane());
-        scene.getStylesheets().add(getClass().getClassLoader().getResource("keywords.css").toExternalForm());
+        applyStyle(scene, Paths.get(cssPath).toAbsolutePath().toString());
         putAccelerators(scene);
         stage.setScene(scene);
+
         if (owner == null) {
             this.stage.setOnCloseRequest(event -> System.exit(0));
         } else {
@@ -200,6 +217,19 @@ public class Main extends Application {
         }
         this.stage.setFullScreen(true);
         stage.showAndWait();
+    }
+
+    /**
+     * Apply style with file path to scene.
+     * @param scene
+     * @param cssPath
+     */
+    private void applyStyle(final Scene scene, final String cssPath) {
+        final ObservableList<String> stylesheets = scene.getStylesheets();
+        stylesheets.add(getClass().getClassLoader().getResource("keywords.css").toExternalForm());
+        Optional.ofNullable(cssPath)
+                .map(str -> Paths.get(str).toUri().toString())
+                .ifPresent(stylesheets::add);
     }
 
     /**
@@ -374,7 +404,7 @@ public class Main extends Application {
 
     @Override
     public void start(final Stage stage) throws Exception {
-        show("sample.txt");
+        show(null, "sample.txt", "sample.css");
     }
 
     /**
