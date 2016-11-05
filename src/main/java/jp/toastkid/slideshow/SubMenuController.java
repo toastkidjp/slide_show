@@ -52,11 +52,23 @@ public class SubMenuController {
     /** Action of hide(). */
     private Runnable hide;
 
+    /** Action of move to end slide. */
+    private Runnable moveToEnd;
+
     /**
      * NOP.
      */
     public SubMenuController() {
-        //readScene();
+        // NOP.
+    }
+
+    /**
+     * Back to first slide.
+     */
+    @FXML
+    private void moveToStart() {
+        indexInput.setText("1");
+        moveToWithText();
     }
 
     /**
@@ -79,6 +91,14 @@ public class SubMenuController {
             throw new IllegalStateException();
         }
         forward.run();
+    }
+
+    /**
+     * Forward slide.
+     */
+    @FXML
+    private void moveToEnd() {
+        moveToEnd.run();
     }
 
     /**
@@ -183,14 +203,17 @@ public class SubMenuController {
         indexSlider.setShowTickMarks(true);
         indexSlider.setShowTickLabels(true);
         indexSlider.setValue(min);
-        ///*
         indexSlider.valueProperty().addListener((prev, next, val) -> {
+            indexInput.setText(Integer.toString(val.intValue()));
             moveToWithText();
         });
-        //*/
         indexSlider.valueProperty().bindBidirectional(current);
-        indexInput.textProperty().bind(current.asString());
+        moveToEnd = () -> {
+            indexInput.setText(Integer.toString(max));
+            moveToWithText();
+        };
     }
+
     /**
      * Set on hide subMenu.
      * @param hide

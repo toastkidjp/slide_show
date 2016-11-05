@@ -21,8 +21,24 @@
    <children>
       <HBox alignment="CENTER" prefHeight="32.0" prefWidth="600.0">
          <children>
-            <JFXButton onAction="#back" mnemonicParsing="false" text="&lt;" />
-            <JFXButton onAction="#forward" mnemonicParsing="false" text="&gt;">
+            <JFXButton onAction="#moveToStart" text="&lt;&lt;" />
+            <JFXButton onAction="#back" text="&lt;">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </JFXButton>
+            <JFXButton onAction="#forward" text="&gt;">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </JFXButton>
+            <JFXButton onAction="#moveToEnd" text="&gt;&gt;">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
