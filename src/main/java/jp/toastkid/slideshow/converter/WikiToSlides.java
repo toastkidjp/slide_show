@@ -16,6 +16,7 @@ import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
 import jp.toastkid.script.highlight.SimpleHighlighter;
+import jp.toastkid.slideshow.slide.CssDemoSlide;
 import jp.toastkid.slideshow.slide.LineFactory;
 import jp.toastkid.slideshow.slide.Slide;
 import jp.toastkid.slideshow.slide.TitleSlide;
@@ -26,6 +27,9 @@ import jp.toastkid.slideshow.slide.TitleSlide;
  * @author Toast kid
  */
 public class WikiToSlides {
+
+    /** Tag of CSS demo. */
+    private static final String TAG_CSS_DEMO = "{css_demo}";
 
     /** System line separator. */
     private static final String LINE_SEPARATOR = System.lineSeparator();
@@ -66,6 +70,12 @@ public class WikiToSlides {
             final MutableList<String> texts = Lists.mutable.empty();
             final StringBuilder code = new StringBuilder();
             lines.forEach(line -> {
+
+                if (TAG_CSS_DEMO.equals(line)) {
+                    slides.add(new CssDemoSlide());
+                    return;
+                }
+
                 if (line.startsWith("*")) {
                     if (s.hasTitle()) {
                         addSlide(slides, texts);

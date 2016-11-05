@@ -58,6 +58,7 @@ public class TitleSlide extends Slide {
         public static Slide make(final String title, final String text) {
             final Slide slide = make(title);
             final Label sub = new Label(text);
+            sub.getStyleClass().add("line");
             sub.setFont(SUB_FONT);
             slide.addContents(LineFactory.centering(sub));
             return slide;
