@@ -243,13 +243,13 @@ public class Main extends Application {
         try (final PDDocument doc = new PDDocument()) {
             final int width  = (int) stage.getWidth();
             final int height = (int) stage.getHeight();
-            Interval.zeroTo(slides.size() - 1).each(i ->{
+            Interval.oneTo(slides.size()).each(i ->{
                 moveTo(i);
                 final long istart = System.currentTimeMillis();
                 final PDPage page = new PDPage(new PDRectangle(width, height));
                 try (final PDPageContentStream content = new PDPageContentStream(doc, page)) {
                     content.drawImage(LosslessFactory.createFromImage(
-                            doc, slides.get(i).generateImage(width, height)), 0, 0);
+                            doc, slides.get(current.get() - 1).generateImage(width, height)), 0, 0);
                 } catch(final IOException ie) {
                     LOGGER.error("Occurred Error!", ie);
                 }
