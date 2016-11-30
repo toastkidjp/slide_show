@@ -180,4 +180,9 @@ public class Slide extends VBox {
 
     }
 
+    @Override
+    public String toString() {
+        return title.getText();
+    }
+
 }

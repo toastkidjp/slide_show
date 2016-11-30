@@ -132,7 +132,9 @@ public class WikiToSlides {
                     }
                 }
                 // Not code.
-                texts.add(line);
+                if (!line.isEmpty()) {
+                    texts.add(line);
+                }
             });
             addSlide(slides, texts);
         } catch (final IOException e) {
