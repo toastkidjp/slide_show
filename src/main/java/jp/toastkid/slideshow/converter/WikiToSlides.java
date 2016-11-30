@@ -15,6 +15,7 @@ import org.eclipse.collections.impl.utility.ArrayIterate;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
+import javafx.scene.image.ImageView;
 import jp.toastkid.script.highlight.SimpleHighlighter;
 import jp.toastkid.slideshow.slide.CssDemoSlide;
 import jp.toastkid.slideshow.slide.LineFactory;
@@ -36,6 +37,9 @@ public class WikiToSlides {
 
     /** Background image pattern. */
     private static final Pattern BACKGROUND = Pattern.compile("\\{background:(.+?)\\}");
+
+    /** In-line image pattern. */
+    private static final Pattern IMAGE = Pattern.compile("\\{img:(.+?)\\}");
 
     /** CSS specifying pattern. */
     private static final Pattern CSS = Pattern.compile("\\{css:(.+?)\\}");
@@ -87,9 +91,17 @@ public class WikiToSlides {
                     return;
                 }
                 if (line.startsWith("{background")) {
-                    Optional.ofNullable(extractImageUrl(line)).ifPresent(image -> s.setBgImage(image));
+                    Optional.ofNullable(extractImageUrl(line, BACKGROUND))
+                            .ifPresent(image -> s.setBgImage(image));
                     return;
                 }
+
+                if (line.startsWith("{img")) {
+                    Optional.ofNullable(extractImageUrl(line, IMAGE))
+                            .ifPresent(image -> s.addContents(LineFactory.centering(new ImageView(image))));
+                    return;
+                }
+
                 // Adding code block.
                 if (line.startsWith("```")) {
                     isInCodeBlock = !isInCodeBlock;
@@ -146,17 +158,18 @@ public class WikiToSlides {
     /**
      * Extract image url from text.
      * @param line line
+     * @param pattern regex pattern
      * @return image url
      */
-    private String extractImageUrl(final String line) {
-        final Matcher matcher = BACKGROUND.matcher(line);
+    private String extractImageUrl(final String line, final Pattern pattern) {
+        final Matcher matcher = pattern.matcher(line);
         if (!matcher.find()) {
             return null;
         }
         final String matches = matcher.group(1);
         final String[] split = matches.split("\\|");
         return ArrayIterate.select(split, piece -> piece.startsWith("src="))
-                           .collect(piece -> piece.substring("src=".length(), piece.length() - 1))
+                           .collect(piece -> piece.substring("src=\"".length(), piece.length() - 1))
                            .getFirst();
     }
 

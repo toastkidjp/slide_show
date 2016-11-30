@@ -86,8 +86,8 @@ public class Slide extends VBox {
     public void setBgImage(final String image) {
         setStyle(
                 "-fx-background-image: url('" + image + "'); " +
-                "-fx-background-position: center center; " +
-                "-fx-background-repeat: stretch;"
+                "-fx-background-position: center center;" +
+                "-fx-background-size: stretch;"
         );
         hasBgImage = true;
     }
