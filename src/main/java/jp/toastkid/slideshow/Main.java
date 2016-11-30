@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jfoenix.controls.JFXProgressBar;
+import com.jfoenix.controls.JFXSnackbar;
+import com.jfoenix.controls.JFXSnackbar.SnackbarEvent;
 
 import javafx.application.Application;
 import javafx.beans.property.IntegerProperty;
@@ -31,6 +33,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -116,6 +119,8 @@ public class Main extends Application {
     /** Controller object. */
     private SubMenuController controller;
 
+    private JFXSnackbar snackbar;
+
     /**
      * Constructor.
      */
@@ -139,6 +144,9 @@ public class Main extends Application {
         subPane.setStyle("-fx-background-color: #EEEEEE;"
                 + "-fx-effect: dropshadow(three-pass-box, #000033, 10, 0, 0, 0);");
         subPane.setManaged(false);
+
+        snackbar = new JFXSnackbar(subPane);
+
         controller.setOnGeneratePdf(this::generatePdf);
         controller.setOnHide(this::hideSubMenu);
         controller.setOnQuit(this::quit);
@@ -230,7 +238,11 @@ public class Main extends Application {
      */
     private void applyStyle(final Scene scene, final String cssUri) {
         final ObservableList<String> stylesheets = scene.getStylesheets();
-        stylesheets.add(getClass().getClassLoader().getResource("keywords.css").toExternalForm());
+        final ClassLoader classLoader = getClass().getClassLoader();
+        stylesheets.addAll(
+                classLoader.getResource("keywords.css").toExternalForm(),
+                classLoader.getResource("css/snackbar.css").toExternalForm()
+                );
         Optional.ofNullable(cssUri).ifPresent(stylesheets::add);
     }
 
@@ -254,9 +266,11 @@ public class Main extends Application {
                     LOGGER.error("Occurred Error!", ie);
                 }
                 doc.addPage(page);
-                LOGGER.info("Ended page. {}[ms]", System.currentTimeMillis() - istart);
+                LOGGER.info("Ended page {}. {}[ms]", i, System.currentTimeMillis() - istart);
             });
             doc.save(new File(DEFAULT_PDF_FILE_NAME));
+
+            snackbar.fireEvent(new SnackbarEvent("Ended generating PDF."));
         } catch(final IOException ie) {
             LOGGER.error("Occurred Error!", ie);
         }
@@ -279,6 +293,12 @@ public class Main extends Application {
         accelerators.put(SUB,       this::switchSubMenu);
         accelerators.put(SAVE,      this::generatePdf);
         accelerators.put(QUIT,      this::quit);
+        scene.setOnMouseClicked(event -> {
+            if (!event.getButton().equals(MouseButton.SECONDARY)) {
+                return;
+            }
+            this.showSubMenu();
+        });
     }
 
     /**

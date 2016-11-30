@@ -26,7 +26,7 @@ dependencies {
     provided 'io.projectreactor:reactor-core:3.0.2.RELEASE'
     compile 'org.apache.pdfbox:pdfbox:2.0.3'
     compile 'commons-logging:commons-logging:1.2'
-    compile fileTree(dir: 'libs', include: '*.jar')
+    provided fileTree(dir: 'libs', include: '*.jar')
     testCompile 'junit:junit:4.12'
 }
 
