@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.impl.factory.Lists;
-import org.eclipse.collections.impl.utility.ArrayIterate;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
@@ -23,23 +22,23 @@ import jp.toastkid.slideshow.slide.Slide;
 import jp.toastkid.slideshow.slide.TitleSlide;
 
 /**
- * Wiki file to Slides.
+ * Markdown file to Slides.
  *
  * @author Toast kid
  */
-public class WikiToSlides extends BaseConverter {
+public class MarkdownToSlides extends BaseConverter {
 
     /** Tag of CSS demo. */
     private static final String TAG_CSS_DEMO = "{css_demo}";
 
     /** Background image pattern. */
-    private static final Pattern BACKGROUND = Pattern.compile("\\{background:(.+?)\\}");
+    private static final Pattern BACKGROUND = Pattern.compile("\\!\\[background\\]\\((.+?)\\)");
 
     /** In-line image pattern. */
-    private static final Pattern IMAGE = Pattern.compile("\\{img:(.+?)\\}");
+    private static final Pattern IMAGE = Pattern.compile("\\!\\[(.+?)\\]\\((.+?)\\)");
 
     /** CSS specifying pattern. */
-    private static final Pattern CSS = Pattern.compile("\\{css:(.+?)\\}");
+    private static final Pattern CSS = Pattern.compile("\\[css\\]\\((.+?)\\)");
 
     /** Source's path */
     private final Path p;
@@ -54,7 +53,7 @@ public class WikiToSlides extends BaseConverter {
      * Init with source's path.
      * @param p
      */
-    public WikiToSlides(final Path p) {
+    public MarkdownToSlides(final Path p) {
         this.p = p;
     }
 
@@ -75,24 +74,30 @@ public class WikiToSlides extends BaseConverter {
                     return;
                 }
 
-                if (line.startsWith("*")) {
+                if (line.startsWith("#")) {
                     if (s.hasTitle()) {
                         addSlide(slides, texts);
-                        s = line.startsWith("* ") ? new TitleSlide() : new Slide();
+                        s = line.startsWith("# ") ? new TitleSlide() : new Slide();
                         texts.clear();
                     }
                     //final String[] split = line.split(" ");
                     s.setTitle(line.substring(line.indexOf(" ")));
                     return;
                 }
+
                 if (line.startsWith("{background")) {
-                    Optional.ofNullable(extractImageUrl(line, BACKGROUND))
-                            .ifPresent(image -> s.setBgImage(image));
                     return;
                 }
 
-                if (line.startsWith("{img")) {
-                    Optional.ofNullable(extractImageUrl(line, IMAGE))
+                if (line.startsWith("![")) {
+
+                    if (line.startsWith("![background](")) {
+                        Optional.ofNullable(extractBackgroundUrl(line))
+                            .ifPresent(image -> s.setBgImage(image));
+                        return;
+                    }
+
+                    Optional.ofNullable(extractImageUrl(line))
                             .ifPresent(image -> s.addContents(LineFactory.centering(new ImageView(image))));
                     return;
                 }
@@ -115,17 +120,20 @@ public class WikiToSlides extends BaseConverter {
                     }
                     return;
                 }
+
                 if (isInCodeBlock && !line.startsWith("```")) {
                     code.append(code.length() != 0 ? LINE_SEPARATOR : "").append(line);
                     return;
                 }
-                if (line.startsWith("{css:")) {
+
+                if (line.startsWith("[css](")) {
                     final Matcher matcher = CSS.matcher(line);
                     if (matcher.find()) {
                         setCss(matcher.group(1));
                         return;
                     }
                 }
+
                 // Not code.
                 if (!line.isEmpty()) {
                     texts.add(line);
@@ -153,21 +161,29 @@ public class WikiToSlides extends BaseConverter {
     }
 
     /**
-     * Extract image url from text.
+     * Extract background image url from text.
      * @param line line
-     * @param pattern regex pattern
      * @return image url
      */
-    private String extractImageUrl(final String line, final Pattern pattern) {
-        final Matcher matcher = pattern.matcher(line);
+    private String extractBackgroundUrl(final String line) {
+        final Matcher matcher = BACKGROUND.matcher(line);
         if (!matcher.find()) {
             return null;
         }
-        final String matches = matcher.group(1);
-        final String[] split = matches.split("\\|");
-        return ArrayIterate.select(split, piece -> piece.startsWith("src="))
-                           .collect(piece -> piece.substring("src=\"".length(), piece.length() - 1))
-                           .getFirst();
+        return matcher.group(1);
+    }
+
+    /**
+     * Extract image url from text.
+     * @param line line
+     * @return image url
+     */
+    private String extractImageUrl(final String line) {
+        final Matcher matcher = IMAGE.matcher(line);
+        if (!matcher.find()) {
+            return null;
+        }
+        return matcher.group(2);
     }
 
 }

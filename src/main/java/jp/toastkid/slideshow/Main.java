@@ -43,6 +43,8 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import jp.toastkid.slideshow.converter.Converter;
+import jp.toastkid.slideshow.converter.MarkdownToSlides;
 import jp.toastkid.slideshow.converter.WikiToSlides;
 import jp.toastkid.slideshow.slide.Slide;
 import jp.toastkid.slideshow.style.StyleManager;
@@ -420,16 +422,27 @@ public class Main extends Application {
      * @return css uri
      */
     private String readSlides(final String filePath) {
-        final WikiToSlides reader = new WikiToSlides(Paths.get(filePath));
-        slides = reader.convert();
+        final Converter converter = findConverter(filePath);
+        slides = converter.convert();
         current = new SimpleIntegerProperty(1);
         controller.setRange(1, slides.size(), current);
-        return StyleManager.findUri(reader.getCss());
+        return StyleManager.findUri(converter.getCss());
+    }
+
+    /**
+     * Find suitable converter by file extension.
+     * @param filePath
+     * @return Converter
+     */
+    private Converter findConverter(final String filePath) {
+        return filePath.endsWith(".md")
+                ? new MarkdownToSlides(Paths.get(filePath))
+                : new WikiToSlides(Paths.get(filePath));
     }
 
     @Override
     public void start(final Stage stage) throws Exception {
-        show(null, "sample.txt");
+        show(null, "sample.md");
     }
 
     /**
