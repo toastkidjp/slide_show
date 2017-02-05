@@ -11,6 +11,9 @@ def javafxHome      = System.getenv('JAVA_HOME')
 
 repositories {
     jcenter()
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
 }
 
 configurations {
@@ -19,7 +22,7 @@ configurations {
 
 dependencies {
     provided 'com.jfoenix:jfoenix:1.0.0'
-    provided 'org.fxmisc.richtext:richtextfx:0.7-M2'
+    provided 'org.fxmisc.richtext:richtextfx:1.0.0-SNAPSHOT'
     provided 'org.slf4j:slf4j-api:1.7.21'
     provided 'org.slf4j:slf4j-log4j12:1.7.21'
     provided 'org.eclipse.collections:eclipse-collections:8.0.0-M1'
