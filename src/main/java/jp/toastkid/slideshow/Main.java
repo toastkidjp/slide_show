@@ -217,9 +217,9 @@ public class Main extends Application {
         final String cssUri = readSlides(filePath);
 
         final Scene scene = new Scene(loadRootPane());
-        if (cssPath != null) {
-            applyStyle(scene, Paths.get(cssPath).toUri().toString());
-        }
+        applyStyle(scene, cssPath != null
+                ? Paths.get(cssPath).toUri().toString()
+                : Paths.get("base.css").toUri().toString());
         Optional.ofNullable(cssUri).ifPresent(c -> applyStyle(scene, c));
         putAccelerators(scene);
         stage.setScene(scene);

@@ -107,7 +107,7 @@ public class MarkdownToSlides extends BaseConverter {
                     isInCodeBlock = !isInCodeBlock;
                     if (!isInCodeBlock && code.length() != 0) {
                         final CodeArea codeArea = new CodeArea();
-                        new SimpleHighlighter(codeArea, "fx.txt", "keywords/groovy.txt")
+                        new SimpleHighlighter(codeArea, "keywords/groovy.txt", "keywords/java.txt")
                             .highlight();
                         codeArea.setEditable(false);
                         codeArea.setStyle("-fx-font-size: 40pt;");
