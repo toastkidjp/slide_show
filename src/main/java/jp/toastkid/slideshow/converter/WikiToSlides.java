@@ -9,13 +9,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import javafx.scene.image.ImageView;
+
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.utility.ArrayIterate;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
-import javafx.scene.image.ImageView;
 import jp.toastkid.script.highlight.SimpleHighlighter;
 import jp.toastkid.slideshow.slide.CssDemoSlide;
 import jp.toastkid.slideshow.slide.LineFactory;

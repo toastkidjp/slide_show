@@ -1,7 +1,7 @@
 apply plugin: 'application'
 apply plugin: 'eclipse'
 
-mainClassName   = 'jp.toastkid.slideshow.Main'
+mainClassName       = 'jp.toastkid.slideshow.Main'
 
 def defaultEncoding = 'UTF-8'
 def jdkVersion      = '1.8'
@@ -21,14 +21,13 @@ configurations {
 }
 
 dependencies {
+    compile 'org.apache.pdfbox:pdfbox:2.0.3'
+    compile 'commons-logging:commons-logging:1.2'
     provided 'com.jfoenix:jfoenix:1.0.0'
     provided 'org.fxmisc.richtext:richtextfx:1.0.0-SNAPSHOT'
     provided 'org.slf4j:slf4j-api:1.7.21'
     provided 'org.slf4j:slf4j-log4j12:1.7.21'
-    provided 'org.eclipse.collections:eclipse-collections:8.0.0-M1'
-    provided 'io.projectreactor:reactor-core:3.0.2.RELEASE'
-    compile 'org.apache.pdfbox:pdfbox:2.0.3'
-    compile 'commons-logging:commons-logging:1.2'
+    provided 'org.eclipse.collections:eclipse-collections:8.0.0'
     provided fileTree(dir: 'libs', include: '*.jar')
     testCompile 'junit:junit:4.12'
 }
@@ -56,10 +55,13 @@ jar {
     from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
 }
 
-task excludedJar(type: Jar) {
-    baseName = rootProject.name + "_excluded"
+task fatJar(type: Jar, dependsOn: compileJava) {
+    baseName = rootProject.name + "_executable"
+    manifest {
+        attributes 'Main-Class' : mainClassName
+    }
     destinationDir = projectDir
+    from configurations.compile.collect  { it.isDirectory() ? it : zipTree(it) }
+    from configurations.provided.collect { it.isDirectory() ? it : zipTree(it) }
     from sourceSets.main.output
-    //exclude('com/jfoenix/**')
-    //exclude('io/**')
 }
