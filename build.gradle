@@ -1,5 +1,6 @@
 apply plugin: 'application'
 apply plugin: 'eclipse'
+apply plugin: 'jacoco'
 
 mainClassName       = 'jp.toastkid.slideshow.Main'
 
@@ -30,14 +31,21 @@ dependencies {
     provided 'org.eclipse.collections:eclipse-collections:8.0.0'
     provided fileTree(dir: 'libs', include: '*.jar')
     testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-all:1.9.5'
+    testCompile 'org.testfx:testfx-junit:4.0.5-alpha'
 }
 
 compileJava {
     sourceSets.main.compileClasspath += configurations.provided
+    sourceSets.test.compileClasspath += configurations.provided
     sourceSets.main.compileClasspath += configurations.testCompile
 }
 
 run {
+    classpath += configurations.provided
+}
+
+test {
     classpath += configurations.provided
 }
 

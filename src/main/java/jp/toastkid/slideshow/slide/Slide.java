@@ -1,6 +1,10 @@
 package jp.toastkid.slideshow.slide;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.collections.impl.utility.ArrayIterate;
 
@@ -30,52 +34,114 @@ public class Slide extends VBox {
     /** Slide duration. */
     private static final Duration TRANSITION_DURATION = Duration.seconds(0.3d);
 
+    /** Title label's font. */
+    private static final Font TITLE_MAIN_FONT = new Font(200);
+
     /** Header text font. */
-    private static final Font HEAD_FONT = new Font(150);
+    private static final Font HEAD_FONT       = new Font(150);
 
     /** Title label. */
-    protected final Label title;
+    private final Label title;
 
     /** Contents. */
-    protected final Pane contents;
+    private final Pane contents;
 
-    /** Has background image. */
-    private boolean hasBgImage;
+    /**
+     * Factory of Slide.
+     *
+     * @author Toast kid
+     */
+    public static class Builder {
+
+        private boolean isFront;
+
+        private String bgImage;
+
+        private String title;
+
+        private List<String> lines;
+
+        private List<Node> contents;
+
+        public Builder title(final String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder isFront(final boolean isFront) {
+            this.isFront = isFront;
+            return this;
+        }
+
+        public Builder addLines(final String... lines) {
+            if (this.lines == null) {
+                this.lines = new ArrayList<>();
+            }
+            ArrayIterate.forEach(lines, this.lines::add);
+            return this;
+        }
+
+        public Builder withContents(final Node... lines) {
+            if (this.contents == null) {
+                this.contents = new ArrayList<>();
+            }
+            this.contents.addAll(Arrays.asList(lines));
+            return this;
+        }
+
+        public Builder background(final String image) {
+            this.bgImage = image;
+            return this;
+        }
+
+        /**
+         * Return has title in this slide.
+         * @return
+         */
+        public boolean hasTitle() {
+            return title != null && title.length() != 0;
+        }
+
+        /**
+         * Return this has background image.
+         * @return
+         */
+        public boolean hasBgImage() {
+            return bgImage != null && bgImage.length() != 0;
+        }
+
+        public Slide build() {
+            return new Slide(this);
+        }
+
+    }
 
     /**
      * Constructor.
      */
-    public Slide() {
-        title = new Label();
-        initTitle();
+    private Slide(final Builder b) {
+        title = new Label(b.title);
+        initTitle(b.isFront);
         contents = new VBox();
+        Optional.ofNullable(b.lines).ifPresent(lines -> lines.stream()
+                    .map(line -> b.isFront ? LineFactory.centeredText(line) : LineFactory.normal(line))
+                    .forEach(contents.getChildren()::add));
+        Optional.ofNullable(b.contents).ifPresent(contents.getChildren()::addAll);
         this.setVisible(false);
         this.getChildren().addAll(LineFactory.centering(title), contents);
+        Optional.ofNullable(b.bgImage).ifPresent(this::setBgImage);
+        if (b.isFront) {
+            this.setAlignment(Pos.CENTER);
+        }
     }
 
     /**
      * Init title.
      */
-    protected void initTitle() {
-        title.setFont(HEAD_FONT);
+    protected void initTitle(final boolean isTitle) {
+        title.setFont(isTitle ? TITLE_MAIN_FONT : HEAD_FONT);
         title.setWrapText(true);
         title.getStyleClass().add("title");
-    }
-
-    /**
-     * Set passed text to title.
-     * @param title
-     */
-    public void setTitle(final String title) {
-        this.title.setText(title);
-    }
-
-    /**
-     * Add Node to contents box.
-     * @param contents
-     */
-    public void addContents(Node... contents) {
-        this.contents.getChildren().addAll(contents);
     }
 
     /**
@@ -83,29 +149,12 @@ public class Slide extends VBox {
      * @param n Node
      * @param image url
      */
-    public void setBgImage(final String image) {
+    private void setBgImage(final String image) {
         setStyle(
                 "-fx-background-image: url('" + image + "'); " +
                 "-fx-background-position: center center;" +
                 "-fx-background-size: stretch;"
         );
-        hasBgImage = true;
-    }
-
-    /**
-     * Return has title in this slide.
-     * @return
-     */
-    public boolean hasTitle() {
-        return title.getText().length() != 0;
-    }
-
-    /**
-     * Return this has background image.
-     * @return
-     */
-    public boolean hasBgImage() {
-        return hasBgImage;
     }
 
     /**
@@ -156,33 +205,6 @@ public class Slide extends VBox {
         next.setInterpolator(Interpolator.LINEAR);
         next.setCycleCount(1);
         next.play();
-    }
-
-    /**
-     * Factory of Slide.
-     * @author Toast kid
-     *
-     */
-    public static class Factory {
-
-        /**
-         * Make simple slide.
-         * @param title title
-         * @param lines lines of content.
-         * @return Slide
-         */
-        public static Slide make(final String title, final String... lines) {
-            final Slide slide = new Slide();
-            ArrayIterate.collect(lines, LineFactory::normal).each(slide::addContents);
-            slide.setTitle(title);
-            return slide;
-        }
-
-    }
-
-    @Override
-    public String toString() {
-        return title.getText();
     }
 
 }

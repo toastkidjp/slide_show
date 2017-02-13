@@ -19,6 +19,13 @@ public class StyleManager {
     private static final Path USER_DIR = Paths.get("user/css/slide");
 
     /**
+     * Deny make instance.
+     */
+    private StyleManager() {
+        // NOP.
+    }
+
+    /**
      * Get path to css.
      * @param s Style name.
      * @return path to css.

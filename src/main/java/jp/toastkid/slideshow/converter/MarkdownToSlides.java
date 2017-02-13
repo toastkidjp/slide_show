@@ -3,7 +3,6 @@ package jp.toastkid.slideshow.converter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,10 +15,8 @@ import org.fxmisc.richtext.LineNumberFactory;
 
 import javafx.scene.image.ImageView;
 import jp.toastkid.script.highlight.SimpleHighlighter;
-import jp.toastkid.slideshow.slide.CssDemoSlide;
 import jp.toastkid.slideshow.slide.LineFactory;
 import jp.toastkid.slideshow.slide.Slide;
-import jp.toastkid.slideshow.slide.TitleSlide;
 
 /**
  * Markdown file to Slides.
@@ -27,9 +24,6 @@ import jp.toastkid.slideshow.slide.TitleSlide;
  * @author Toast kid
  */
 public class MarkdownToSlides extends BaseConverter {
-
-    /** Tag of CSS demo. */
-    private static final String TAG_CSS_DEMO = "{css_demo}";
 
     /** Background image pattern. */
     private static final Pattern BACKGROUND = Pattern.compile("\\!\\[background\\]\\((.+?)\\)");
@@ -44,7 +38,7 @@ public class MarkdownToSlides extends BaseConverter {
     private final Path p;
 
     /** Slide. */
-    private Slide s = new TitleSlide();
+    private Slide.Builder builder;
 
     /** Code block processing. */
     private boolean isInCodeBlock = false;
@@ -55,6 +49,7 @@ public class MarkdownToSlides extends BaseConverter {
      */
     public MarkdownToSlides(final Path p) {
         this.p = p;
+        builder = new Slide.Builder();
     }
 
     /**
@@ -65,27 +60,18 @@ public class MarkdownToSlides extends BaseConverter {
     public MutableList<Slide> convert() {
         final MutableList<Slide> slides = Lists.mutable.empty();
         try (final Stream<String> lines = Files.lines(p)) {
-            final MutableList<String> texts = Lists.mutable.empty();
             final StringBuilder code = new StringBuilder();
             lines.forEach(line -> {
 
-                if (TAG_CSS_DEMO.equals(line)) {
-                    slides.add(new CssDemoSlide());
-                    return;
-                }
-
                 if (line.startsWith("#")) {
-                    if (s.hasTitle()) {
-                        addSlide(slides, texts);
-                        s = line.startsWith("# ") ? new TitleSlide() : new Slide();
-                        texts.clear();
+                    if (builder.hasTitle()) {
+                        slides.add(builder.build());
+                        builder = new Slide.Builder();
                     }
-                    //final String[] split = line.split(" ");
-                    s.setTitle(line.substring(line.indexOf(" ")));
-                    return;
-                }
-
-                if (line.startsWith("{background")) {
+                    if (line.startsWith("# ")) {
+                        builder.isFront(true);
+                    }
+                    builder.title(line.substring(line.indexOf(" ")));
                     return;
                 }
 
@@ -93,12 +79,12 @@ public class MarkdownToSlides extends BaseConverter {
 
                     if (line.startsWith("![background](")) {
                         Optional.ofNullable(extractBackgroundUrl(line))
-                            .ifPresent(image -> s.setBgImage(image));
+                            .ifPresent(builder::background);
                         return;
                     }
 
                     Optional.ofNullable(extractImageUrl(line))
-                            .ifPresent(image -> s.addContents(LineFactory.centering(new ImageView(image))));
+                            .ifPresent(image -> builder.withContents(LineFactory.centering(new ImageView(image))));
                     return;
                 }
 
@@ -115,7 +101,7 @@ public class MarkdownToSlides extends BaseConverter {
                         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
                         final int height = code.toString().split(LINE_SEPARATOR).length * 80;
                         codeArea.setMinHeight(height);
-                        s.addContents(codeArea);
+                        builder.withContents(codeArea);
                         code.setLength(0);
                     }
                     return;
@@ -136,28 +122,14 @@ public class MarkdownToSlides extends BaseConverter {
 
                 // Not code.
                 if (!line.isEmpty()) {
-                    texts.add(line);
+                    builder.addLines(line);
                 }
             });
-            addSlide(slides, texts);
+            slides.add(builder.build());
         } catch (final IOException e) {
             e.printStackTrace();
         }
         return slides;
-    }
-
-    /**
-     * Add slide to passed List.
-     * @param slides list
-     * @param texts text list.
-     */
-    private void addSlide(final List<Slide> slides, final MutableList<String> texts) {
-        if (s instanceof TitleSlide && !texts.isEmpty()) {
-            s.addContents(LineFactory.centeredText(texts.get(0)));
-        } else {
-            texts.collect(LineFactory::normal).each(s::addContents);
-        }
-        slides.add(s);
     }
 
     /**

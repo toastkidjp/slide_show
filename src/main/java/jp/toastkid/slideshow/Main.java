@@ -45,7 +45,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import jp.toastkid.slideshow.converter.Converter;
 import jp.toastkid.slideshow.converter.MarkdownToSlides;
-import jp.toastkid.slideshow.converter.WikiToSlides;
 import jp.toastkid.slideshow.slide.Slide;
 import jp.toastkid.slideshow.style.StyleManager;
 
@@ -58,6 +57,9 @@ public class Main extends Application {
 
     /** Logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+
+    /** If you want to test, this flag should be false. */
+    private static final boolean FULL_SCREEN = true;
 
     /** PDF file name. */
     private static final String DEFAULT_PDF_FILE_NAME = "slide.pdf";
@@ -229,7 +231,7 @@ public class Main extends Application {
         } else {
             this.stage.initOwner(owner);
         }
-        this.stage.setFullScreen(true);
+        this.stage.setFullScreen(FULL_SCREEN);
         stage.showAndWait();
     }
 
@@ -435,9 +437,7 @@ public class Main extends Application {
      * @return Converter
      */
     private Converter findConverter(final String filePath) {
-        return filePath.endsWith(".md")
-                ? new MarkdownToSlides(Paths.get(filePath))
-                : new WikiToSlides(Paths.get(filePath));
+        return new MarkdownToSlides(Paths.get(filePath));
     }
 
     @Override

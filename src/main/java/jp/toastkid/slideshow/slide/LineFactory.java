@@ -17,6 +17,13 @@ public class LineFactory {
     private static final Font LINE_FONT = new Font(80);
 
     /**
+     * Deny make instance.
+     */
+    private LineFactory() {
+        // NOP.
+    }
+
+    /**
      * Make simple line.
      * @param text line's text
      * @return Label
