@@ -4,6 +4,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 
 /**
@@ -33,6 +34,7 @@ public class LineFactory {
         line.getStyleClass().add("line");
         line.setFont(LINE_FONT);
         line.setWrapText(true);
+        line.setMinHeight(Region.USE_PREF_SIZE);
         return line;
     }
 
@@ -49,8 +51,8 @@ public class LineFactory {
 
     /**
      * Return centered label.
-     * @param n Node
-     * @return
+     * @param text
+     * @return Node
      */
     public static Node centeredText(final String text) {
         final HBox forCentering = new HBox(normal(text));

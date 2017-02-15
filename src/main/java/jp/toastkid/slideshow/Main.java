@@ -59,7 +59,10 @@ public class Main extends Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     /** If you want to test, this flag should be false. */
-    private static final boolean FULL_SCREEN = true;
+    private static final boolean FULL_SCREEN = false;
+
+    /** Default CSS. */
+    private static final String DEFAULT_CSS = "plain";
 
     /** PDF file name. */
     private static final String DEFAULT_PDF_FILE_NAME = "slide.pdf";
@@ -221,7 +224,7 @@ public class Main extends Application {
         final Scene scene = new Scene(loadRootPane());
         applyStyle(scene, cssPath != null
                 ? Paths.get(cssPath).toUri().toString()
-                : Paths.get("base.css").toUri().toString());
+                : StyleManager.findUri(DEFAULT_CSS));
         Optional.ofNullable(cssUri).ifPresent(c -> applyStyle(scene, c));
         putAccelerators(scene);
         stage.setScene(scene);

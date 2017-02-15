@@ -19,6 +19,7 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Label;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
@@ -125,6 +126,7 @@ public class Slide extends VBox {
         contents = new VBox();
         Optional.ofNullable(b.lines).ifPresent(lines -> lines.stream()
                     .map(line -> b.isFront ? LineFactory.centeredText(line) : LineFactory.normal(line))
+                    .map(label -> {label.prefWidth(this.getPrefWidth()); return label;})
                     .forEach(contents.getChildren()::add));
         Optional.ofNullable(b.contents).ifPresent(contents.getChildren()::addAll);
         this.setVisible(false);
@@ -142,6 +144,7 @@ public class Slide extends VBox {
         title.setFont(isTitle ? TITLE_MAIN_FONT : HEAD_FONT);
         title.setWrapText(true);
         title.getStyleClass().add("title");
+        title.setMinHeight(Region.USE_PREF_SIZE);
     }
 
     /**
