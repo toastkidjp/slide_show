@@ -49,9 +49,10 @@ public class MarkdownToSlidesTest extends ApplicationTest {
      */
     private void checkCodeSlide(final MutableList<Slide> slides) {
         final Slide code = slides.get(3);
+        final VBox contents = (VBox) Whitebox.getInternalState(code, "contents");
         @SuppressWarnings("rawtypes")
         final GenericStyledArea node
-            = (GenericStyledArea) ((VBox) code.getChildren().get(1)).getChildren().get(0);
+            = (GenericStyledArea) ((VBox) contents.getChildren().get(1)).getChildren().get(0);
         assertEquals(
                 "int a = 100;System.out.println(a);",
                 node.getText().replaceFirst("\r\n|[\n\r\u2028\u2029\u0085]", "")

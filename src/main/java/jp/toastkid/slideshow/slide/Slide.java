@@ -17,8 +17,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -30,7 +30,7 @@ import javafx.util.Duration;
  *
  * @author Toast kid
  */
-public class Slide extends VBox {
+public class Slide extends ScrollPane {
 
     /** Slide duration. */
     private static final Duration TRANSITION_DURATION = Duration.seconds(0.3d);
@@ -45,7 +45,7 @@ public class Slide extends VBox {
     private final Label title;
 
     /** Contents. */
-    private final Pane contents;
+    private final VBox contents;
 
     /**
      * Factory of Slide.
@@ -121,20 +121,23 @@ public class Slide extends VBox {
      * Constructor.
      */
     private Slide(final Builder b) {
+        this.setHbarPolicy(ScrollBarPolicy.NEVER);
+        this.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
+        this.setFitToWidth(true);
         title = new Label(b.title);
         initTitle(b.isFront);
         contents = new VBox();
+        contents.getChildren().addAll(LineFactory.centering(title));
         Optional.ofNullable(b.lines).ifPresent(lines -> lines.stream()
                     .map(line -> b.isFront ? LineFactory.centeredText(line) : LineFactory.normal(line))
-                    .map(label -> {label.prefWidth(this.getPrefWidth()); return label;})
                     .forEach(contents.getChildren()::add));
         Optional.ofNullable(b.contents).ifPresent(contents.getChildren()::addAll);
         this.setVisible(false);
-        this.getChildren().addAll(LineFactory.centering(title), contents);
         Optional.ofNullable(b.bgImage).ifPresent(this::setBgImage);
         if (b.isFront) {
-            this.setAlignment(Pos.CENTER);
+            this.contents.setAlignment(Pos.CENTER);
         }
+        this.setContent(contents);
     }
 
     /**
@@ -208,6 +211,20 @@ public class Slide extends VBox {
         next.setInterpolator(Interpolator.LINEAR);
         next.setCycleCount(1);
         next.play();
+    }
+
+    /**
+     * Scroll up.
+     */
+    public void scrollUp() {
+        setVvalue(this.getVvalue() - 0.20d);
+    }
+
+    /**
+     * Scroll down.
+     */
+    public void scrollDown() {
+        setVvalue(this.getVvalue() + 0.20d);
     }
 
 }

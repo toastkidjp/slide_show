@@ -68,23 +68,26 @@ public class SlideTest extends ApplicationTest {
      */
     @Test
     public void test_setIndicator() {
+
+        final VBox contents = (VBox) Whitebox.getInternalState(slide, "contents");
+
         slide.setIndicator(-1, -1);
         final ProgressBar slider
-            = (ProgressBar) ((VBox) slide.getChildren().get(2)).getChildren().get(0);
+            = (ProgressBar) ((VBox) contents.getChildren().get(2)).getChildren().get(0);
         assertEquals(1.0d, slider.getProgress(), 0.1d);
-        slide.getChildren().remove(2);
+        contents.getChildren().remove(2);
 
         slide.setIndicator(0, 0);
         final ProgressBar zero
-            = (ProgressBar) ((VBox) slide.getChildren().get(2)).getChildren().get(0);
+            = (ProgressBar) ((VBox) contents.getChildren().get(2)).getChildren().get(0);
         assertEquals(Double.NaN, zero.getProgress(), 0.1d);
-        slide.getChildren().remove(2);
+        contents.getChildren().remove(2);
 
         slide.setIndicator(1, 12);
         final ProgressBar posi
-            = (ProgressBar) ((VBox) slide.getChildren().get(2)).getChildren().get(0);
+            = (ProgressBar) ((VBox) contents.getChildren().get(2)).getChildren().get(0);
         assertEquals(0.08333333333333333d, posi.getProgress(), 0.01d);
-        slide.getChildren().remove(2);
+        contents.getChildren().remove(2);
     }
 
     /**

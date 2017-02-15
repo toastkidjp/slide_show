@@ -80,7 +80,7 @@ public class Main extends Application {
     private static final KeyCodeCombination BACK_2 = new KeyCodeCombination(KeyCode.LEFT);
 
     /** Back key. */
-    private static final KeyCodeCombination BACK_3 = new KeyCodeCombination(KeyCode.UP);
+    private static final KeyCodeCombination UP = new KeyCodeCombination(KeyCode.UP);
 
     /** Forward key. */
     private static final KeyCodeCombination FORWARD_1 = new KeyCodeCombination(KeyCode.ENTER);
@@ -89,7 +89,7 @@ public class Main extends Application {
     private static final KeyCodeCombination FORWARD_2 = new KeyCodeCombination(KeyCode.RIGHT);
 
     /** Forward key. */
-    private static final KeyCodeCombination FORWARD_3 = new KeyCodeCombination(KeyCode.DOWN);
+    private static final KeyCodeCombination DOWN = new KeyCodeCombination(KeyCode.DOWN);
 
     /** Quit key. */
     private static final KeyCodeCombination SUB
@@ -293,13 +293,13 @@ public class Main extends Application {
         accelerators.put(FULL_SCREEN_KEY, () -> stage.setFullScreen(true));
         accelerators.put(BACK_1,    this::back);
         accelerators.put(BACK_2,    this::back);
-        accelerators.put(BACK_3,    this::back);
         accelerators.put(FORWARD_1, this::forward);
         accelerators.put(FORWARD_2, this::forward);
-        accelerators.put(FORWARD_3, this::forward);
         accelerators.put(SUB,       this::switchSubMenu);
         accelerators.put(SAVE,      this::generatePdf);
         accelerators.put(QUIT,      this::quit);
+        accelerators.put(UP,        () -> slides.get(current.get() - 1).scrollUp());
+        accelerators.put(DOWN,      () -> slides.get(current.get() - 1).scrollDown());
         scene.setOnMouseClicked(event -> {
             if (!event.getButton().equals(MouseButton.SECONDARY)) {
                 return;
