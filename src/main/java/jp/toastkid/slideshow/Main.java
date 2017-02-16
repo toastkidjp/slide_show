@@ -20,6 +20,7 @@ import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXSnackbar.SnackbarEvent;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
@@ -45,6 +46,11 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import jp.toastkid.slideshow.converter.Converter;
 import jp.toastkid.slideshow.converter.MarkdownToSlides;
+import jp.toastkid.slideshow.message.HidingMenuMessage;
+import jp.toastkid.slideshow.message.Message;
+import jp.toastkid.slideshow.message.MoveMessage;
+import jp.toastkid.slideshow.message.PdfMessage;
+import jp.toastkid.slideshow.message.QuitMessage;
 import jp.toastkid.slideshow.slide.Slide;
 import jp.toastkid.slideshow.style.StyleManager;
 
@@ -126,6 +132,7 @@ public class Main extends Application {
     /** Controller object. */
     private SubMenuController controller;
 
+    /** Snackbar popup. */
     private JFXSnackbar snackbar;
 
     /**
@@ -154,12 +161,45 @@ public class Main extends Application {
 
         snackbar = new JFXSnackbar(subPane);
 
-        controller.setOnGeneratePdf(this::generatePdf);
-        controller.setOnHide(this::hideSubMenu);
-        controller.setOnQuit(this::quit);
-        controller.setOnBack(this::back);
-        controller.setOnForward(this::forward);
-        controller.setOnMoveTo(this::moveTo);
+        controller.getMessenger().subscribe(this::processMessage);
+    }
+
+    /**
+     * Process passed message.
+     * @param m
+     */
+    private void processMessage(final Message m) {
+        if (m instanceof HidingMenuMessage) {
+            hideSubMenu();
+            return;
+        }
+
+        if (m instanceof MoveMessage) {
+            final MoveMessage message = (MoveMessage) m;
+            switch (message.getCommand()) {
+                case TO:
+                    Platform.runLater(() -> moveTo(message.getTo()));
+                    return;
+                case BACK:
+                    Platform.runLater(this::back);
+                    return;
+                case FORWARD:
+                    Platform.runLater(this::forward);
+                    return;
+                default:
+                    return;
+            }
+        }
+
+        if (m instanceof PdfMessage) {
+            Platform.runLater(this::generatePdf);
+            return;
+        }
+
+        if (m instanceof QuitMessage) {
+            Platform.runLater(this::quit);
+            return;
+        }
     }
 
     /**
@@ -394,7 +434,7 @@ public class Main extends Application {
      * @param index
      */
     private void moveTo(final int index) {
-        if (index <= 0 || slides.size() < index) {
+        if (index <= 0 || slides.size() < index || index == current.get()) {
             return;
         }
 

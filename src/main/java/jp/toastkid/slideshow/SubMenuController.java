@@ -1,7 +1,5 @@
 package jp.toastkid.slideshow;
 
-import java.util.function.Consumer;
-
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.NumberValidator;
@@ -10,6 +8,12 @@ import javafx.beans.property.IntegerProperty;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import jp.toastkid.slideshow.control.Stopwatch;
+import jp.toastkid.slideshow.message.HidingMenuMessage;
+import jp.toastkid.slideshow.message.Message;
+import jp.toastkid.slideshow.message.MoveMessage;
+import jp.toastkid.slideshow.message.PdfMessage;
+import jp.toastkid.slideshow.message.QuitMessage;
+import reactor.core.publisher.TopicProcessor;
 
 /**
  * SubMenu controller.
@@ -34,32 +38,14 @@ public class SubMenuController {
     @FXML
     private Stopwatch stopwatch;
 
-    /** Action of generatePdf(). */
-    private Runnable generatePdf;
-
-    /** Action of quit(). */
-    private Runnable quit;
-
-    /** Action of back(). */
-    private Runnable back;
-
-    /** Action of forward(). */
-    private Runnable forward;
-
-    /** Action of moveTo(). */
-    private Consumer<Integer> moveTo;
-
-    /** Action of hide(). */
-    private Runnable hide;
-
-    /** Action of move to end slide. */
-    private Runnable moveToEnd;
+    /** Message sender. */
+    private final TopicProcessor<Message> messenger;
 
     /**
      * NOP.
      */
     public SubMenuController() {
-        // NOP.
+        messenger = TopicProcessor.create();
     }
 
     /**
@@ -76,10 +62,7 @@ public class SubMenuController {
      */
     @FXML
     private void back() {
-        if (back == null) {
-            throw new IllegalStateException();
-        }
-        back.run();
+        messenger.onNext(MoveMessage.makeBack());
     }
 
     /**
@@ -87,10 +70,7 @@ public class SubMenuController {
      */
     @FXML
     private void forward() {
-        if (forward == null) {
-            throw new IllegalStateException();
-        }
-        forward.run();
+        messenger.onNext(MoveMessage.makeForward());
     }
 
     /**
@@ -98,7 +78,8 @@ public class SubMenuController {
      */
     @FXML
     private void moveToEnd() {
-        moveToEnd.run();
+        indexInput.setText(Integer.toString((int) indexSlider.getMax()));
+        moveToWithText();
     }
 
     /**
@@ -106,10 +87,7 @@ public class SubMenuController {
      */
     @FXML
     private void generatePdf() {
-        if (generatePdf == null) {
-            throw new IllegalStateException();
-        }
-        generatePdf.run();
+        messenger.onNext(PdfMessage.make());
     }
 
     /**
@@ -121,8 +99,7 @@ public class SubMenuController {
         if (text == null || text.length() == 0) {
             return;
         }
-        final int index = Integer.parseInt(text);
-        moveTo.accept(index);
+        messenger.onNext(MoveMessage.makeTo(Integer.parseInt(text)));
     }
 
     /**
@@ -130,10 +107,7 @@ public class SubMenuController {
      */
     @FXML
     private void hide() {
-        if (hide == null) {
-            throw new IllegalStateException();
-        }
-        hide.run();
+        messenger.onNext(HidingMenuMessage.make());
     }
 
     /**
@@ -141,51 +115,7 @@ public class SubMenuController {
      */
     @FXML
     private void quit() {
-        if (quit == null) {
-            throw new IllegalStateException();
-        }
-        quit.run();
-    }
-
-    /**
-     * Set on generatePdf() action.
-     * @param generatePdf
-     */
-    public void setOnGeneratePdf(final Runnable generatePdf) {
-        this.generatePdf = generatePdf;
-    }
-
-    /**
-     * Set on quit() action.
-     * @param quit
-     */
-    public void setOnQuit(final Runnable quit) {
-        this.quit = quit;
-    }
-
-    /**
-     * Set on back() action.
-     * @param quit
-     */
-    public void setOnBack(final Runnable back) {
-        this.back = back;
-    }
-
-    /**
-     * Set on forward() action.
-     * @param quit
-     */
-    public void setOnForward(final Runnable forward) {
-        this.forward = forward;
-    }
-
-    /**
-     * Set on moveTo() action.
-     * @param moveTo
-     */
-    public void setOnMoveTo(final Consumer<Integer> moveTo) {
-        this.moveTo = moveTo;
-        indexInput.getValidators().add(new NumberValidator());
+        messenger.onNext(QuitMessage.make());
     }
 
     /**
@@ -208,18 +138,7 @@ public class SubMenuController {
             moveToWithText();
         });
         indexSlider.valueProperty().bindBidirectional(current);
-        moveToEnd = () -> {
-            indexInput.setText(Integer.toString(max));
-            moveToWithText();
-        };
-    }
-
-    /**
-     * Set on hide subMenu.
-     * @param hide
-     */
-    public void setOnHide(Runnable hide) {
-        this.hide = hide;
+        indexInput.getValidators().add(new NumberValidator());
     }
 
     /**
@@ -230,8 +149,19 @@ public class SubMenuController {
         return root;
     }
 
+    /**
+     * Set focus on index input.
+     */
     public void setFocus() {
         indexInput.requestFocus();
+    }
+
+    /**
+     * Return message sender.
+     * @return {@link TopicProcessor}.
+     */
+    public TopicProcessor<Message> getMessenger() {
+        return messenger;
     }
 
 }

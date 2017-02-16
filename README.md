@@ -32,5 +32,6 @@ This software contains following open source softwares. Thanks a lot. :bow:
 | [PDFBox](https://pdfbox.apache.org/) | Apache License 2.0 | Converting slides to PDF
 | [commons-io](http://commons.apache.org/proper/commons-io/) | Apache License 2.0 | PDF-Box's dependency lib.
 | [commons-lang3](https://commons.apache.org/proper/commons-lang/) | [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+| [Reactor Core](https://projectreactor.io/) | Apache License Version 2.0 | Implementation of Reactive Extensions.
 | [slf4j-api](http://www.slf4j.org/) | [MIT license](http://www.slf4j.org/license.html) | Logging
 
