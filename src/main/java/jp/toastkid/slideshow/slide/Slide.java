@@ -122,7 +122,7 @@ public class Slide extends ScrollPane {
      */
     private Slide(final Builder b) {
         this.setHbarPolicy(ScrollBarPolicy.NEVER);
-        this.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
+        this.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
         this.setFitToWidth(true);
         title = new Label(b.title);
         initTitle(b.isFront);
