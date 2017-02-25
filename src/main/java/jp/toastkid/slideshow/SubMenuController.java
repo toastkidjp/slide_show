@@ -53,8 +53,7 @@ public class SubMenuController {
      */
     @FXML
     private void moveToStart() {
-        indexInput.setText("1");
-        moveToWithText();
+        messenger.onNext(MoveMessage.makeStart());
     }
 
     /**
@@ -78,8 +77,7 @@ public class SubMenuController {
      */
     @FXML
     private void moveToEnd() {
-        indexInput.setText(Integer.toString((int) indexSlider.getMax()));
-        moveToWithText();
+        messenger.onNext(MoveMessage.makeTo((int) indexSlider.getMax()));
     }
 
     /**
@@ -135,7 +133,6 @@ public class SubMenuController {
         indexSlider.setValue(min);
         indexSlider.valueProperty().addListener((prev, next, val) -> {
             indexInput.setText(Integer.toString(val.intValue()));
-            moveToWithText();
         });
         indexSlider.valueProperty().bindBidirectional(current);
         indexInput.getValidators().add(new NumberValidator());

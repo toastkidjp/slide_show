@@ -14,6 +14,16 @@ import jp.toastkid.slideshow.message.MoveMessage.Command;
 public class MoveMessageTest {
 
     /**
+     * Test of {@link MoveMessage#makeStart()}.
+     */
+    @Test
+    public void test_makeStart() {
+        final MoveMessage m = MoveMessage.makeStart();
+        assertEquals(Command.START, m.getCommand());
+        assertEquals(1,             m.getTo());
+    }
+
+    /**
      * Test of {@link MoveMessage#makeBack()}.
      */
     @Test

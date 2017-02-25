@@ -65,7 +65,7 @@ public class Main extends Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     /** If you want to test, this flag should be false. */
-    private static final boolean FULL_SCREEN = false;
+    private static final boolean FULL_SCREEN = true;
 
     /** Default CSS. */
     private static final String DEFAULT_CSS = "plain";
@@ -177,6 +177,9 @@ public class Main extends Application {
         if (m instanceof MoveMessage) {
             final MoveMessage message = (MoveMessage) m;
             switch (message.getCommand()) {
+                case START:
+                    Platform.runLater(() -> moveTo(message.getTo()));
+                    return;
                 case TO:
                     Platform.runLater(() -> moveTo(message.getTo()));
                     return;
@@ -275,7 +278,7 @@ public class Main extends Application {
             this.stage.initOwner(owner);
         }
         this.stage.setFullScreen(FULL_SCREEN);
-        stage.showAndWait();
+        stage.show();
     }
 
     /**
@@ -382,6 +385,7 @@ public class Main extends Application {
     private void quit() {
         stage.close();
         if (stage.getOwner() == null) {
+            Platform.exit();
             System.exit(0);
         }
     }

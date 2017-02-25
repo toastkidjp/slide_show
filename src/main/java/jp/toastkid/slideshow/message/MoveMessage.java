@@ -14,7 +14,7 @@ public class MoveMessage implements Message {
      *
      */
     public enum Command {
-        BACK, FORWARD, TO
+        START, BACK, FORWARD, TO
     }
 
     /** This message's command. */
@@ -47,6 +47,14 @@ public class MoveMessage implements Message {
      */
     public int getTo() {
         return this.to;
+    }
+
+    /**
+     * Make start event.
+     * @return
+     */
+    public static MoveMessage makeStart() {
+        return new MoveMessage(Command.START, 1);
     }
 
     /**
