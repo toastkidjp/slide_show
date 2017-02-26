@@ -414,6 +414,7 @@ public class Main extends Application {
         indicatorBox.setAlignment(Pos.CENTER_RIGHT);
         jfxProgressBar = new JFXProgressBar(0);
         jfxProgressBar.setPrefWidth(Screen.getPrimary().getBounds().getWidth());
+
         final VBox barBox = new VBox(indicatorBox, jfxProgressBar);
         barBox.setAlignment(Pos.BOTTOM_CENTER);
         root.getChildren().add(barBox);

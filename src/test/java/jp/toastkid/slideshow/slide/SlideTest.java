@@ -5,15 +5,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.mockito.internal.util.reflection.Whitebox;
 import org.testfx.framework.junit.ApplicationTest;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Labeled;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import jp.toastkid.slideshow.slide.Slide.Builder;
@@ -33,8 +30,12 @@ public class SlideTest extends ApplicationTest {
      */
     @Test
     public void test_slide() {
-        assertEquals("Title", ((Labeled) Whitebox.getInternalState(slide, "title")).getText());
-        assertEquals(3, ((Pane) Whitebox.getInternalState(slide, "contents")).getChildren().size());
+        final VBox contents = (VBox) slide.getContent();
+        assertEquals(
+                "Title",
+                ((Labeled) ((HBox) contents.getChildren().get(0)).getChildren().get(0)).getText()
+                );
+        assertEquals(4, contents.getChildren().size());
     }
 
     /**
@@ -43,10 +44,11 @@ public class SlideTest extends ApplicationTest {
     @Test
     public void test_frontSlide() {
         final Slide front = new Slide.Builder().title("Title").addLines("name").isFront(true).build();
-        final Labeled labeled = (Labeled) Whitebox.getInternalState(front, "title");
+        final VBox contents = (VBox) front.getContent();
+        final Labeled labeled = (Labeled) ((HBox) contents.getChildren().get(0)).getChildren().get(0);
         assertEquals(200.0d, labeled.getFont().getSize(), 0.0d);
 
-        final HBox node = (HBox) ((Pane) Whitebox.getInternalState(front, "contents")).getChildren().get(0);
+        final HBox node = (HBox) contents.getChildren().get(0);
         assertEquals(Pos.CENTER, node.getAlignment());
     }
 
@@ -61,33 +63,6 @@ public class SlideTest extends ApplicationTest {
         builder.title("Tomato").background("sample.png");
         assertTrue(builder.hasBgImage());
         assertTrue(builder.hasTitle());
-    }
-
-    /**
-     * Test of {@link Slide#setIndicator(int, int)}.
-     */
-    @Test
-    public void test_setIndicator() {
-
-        final VBox contents = (VBox) Whitebox.getInternalState(slide, "contents");
-
-        slide.setIndicator(-1, -1);
-        final ProgressBar slider
-            = (ProgressBar) ((VBox) contents.getChildren().get(2)).getChildren().get(0);
-        assertEquals(1.0d, slider.getProgress(), 0.1d);
-        contents.getChildren().remove(2);
-
-        slide.setIndicator(0, 0);
-        final ProgressBar zero
-            = (ProgressBar) ((VBox) contents.getChildren().get(2)).getChildren().get(0);
-        assertEquals(Double.NaN, zero.getProgress(), 0.1d);
-        contents.getChildren().remove(2);
-
-        slide.setIndicator(1, 12);
-        final ProgressBar posi
-            = (ProgressBar) ((VBox) contents.getChildren().get(2)).getChildren().get(0);
-        assertEquals(0.08333333333333333d, posi.getProgress(), 0.01d);
-        contents.getChildren().remove(2);
     }
 
     /**
