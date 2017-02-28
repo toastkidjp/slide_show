@@ -5,6 +5,7 @@ import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.NumberValidator;
 
 import javafx.beans.property.IntegerProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import jp.toastkid.slideshow.control.Stopwatch;
@@ -97,7 +98,13 @@ public class SubMenuController {
         if (text == null || text.length() == 0) {
             return;
         }
-        messenger.onNext(MoveMessage.makeTo(Integer.parseInt(text)));
+
+        final int parseInt = Integer.parseInt(text);
+        messenger.onNext(MoveMessage.makeTo(parseInt));
+        if ((int) roundSliderValue() == parseInt) {
+            return;
+        }
+        indexSlider.setValue(parseInt);
     }
 
     /**
@@ -132,10 +139,20 @@ public class SubMenuController {
         indexSlider.setShowTickLabels(true);
         indexSlider.setValue(min);
         indexSlider.valueProperty().addListener((prev, next, val) -> {
-            indexInput.setText(Integer.toString(val.intValue()));
+            final long rounded = roundSliderValue();
+            indexSlider.setValue(rounded);
+            indexInput.setText(Long.toString(rounded));
+            indexInput.fireEvent(new ActionEvent());
         });
-        indexSlider.valueProperty().bindBidirectional(current);
         indexInput.getValidators().add(new NumberValidator());
+    }
+
+    /**
+     * Return rounded value in slider.
+     * @return rounded value(long)
+     */
+    private long roundSliderValue() {
+        return Math.round(indexSlider.getValue());
     }
 
     /**
