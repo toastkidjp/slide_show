@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.eclipse.collections.api.list.MutableList;
 import org.fxmisc.richtext.GenericStyledArea;
@@ -15,6 +14,7 @@ import javafx.scene.control.Labeled;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import jp.toastkid.slideshow.TestResources;
 import jp.toastkid.slideshow.slide.Slide;
 
 /**
@@ -31,8 +31,7 @@ public class MarkdownToSlidesTest extends ApplicationTest {
      */
     @Test
     public void test() throws URISyntaxException {
-        final Path testResource
-            = Paths.get(getClass().getClassLoader().getResource("jp/toastkid/slideshow/converter/test.md").toURI());
+        final Path testResource = TestResources.source();
         final MarkdownToSlides toSlides = new MarkdownToSlides(testResource);
         final MutableList<Slide> slides = toSlides.convert();
         assertEquals(5, slides.size());

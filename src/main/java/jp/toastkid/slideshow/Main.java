@@ -20,7 +20,7 @@ public class Main extends Application {
         stage.setTitle(TITLE);
         stage.setOnCloseRequest(event -> stage.close());
         new Slideshow.Builder()
-            .setStage(stage)
+            .setOwner(stage)
             .setSource(Paths.get("sample.md"))
             .setIsFullScreen(false)
             .build()

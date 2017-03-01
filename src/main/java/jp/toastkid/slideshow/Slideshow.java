@@ -163,7 +163,7 @@ public class Slideshow {
          * @param s
          * @return
          */
-        public Builder setStage(final Stage s) {
+        public Builder setOwner(final Stage s) {
             this.stage = s;
             return this;
         }
