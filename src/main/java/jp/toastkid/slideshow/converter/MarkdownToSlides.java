@@ -3,9 +3,14 @@ package jp.toastkid.slideshow.converter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.eclipse.collections.api.list.MutableList;
@@ -13,6 +18,8 @@ import org.eclipse.collections.impl.factory.Lists;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
+import javafx.collections.ObservableList;
+import javafx.scene.control.TableColumn;
 import javafx.scene.image.ImageView;
 import jp.toastkid.script.highlight.SimpleHighlighter;
 import jp.toastkid.slideshow.slide.LineFactory;
@@ -37,11 +44,17 @@ public class MarkdownToSlides extends BaseConverter {
     /** Source's path */
     private final Path p;
 
-    /** Slide. */
+    /** Slide builder. */
     private Slide.Builder builder;
+
+    /** Table builder. */
+    private TableBuilder tableBuilder;
 
     /** Code block processing. */
     private boolean isInCodeBlock = false;
+
+    /** Table processing. */
+    private boolean isInTable = false;
 
     /**
      * Init with source's path.
@@ -62,7 +75,6 @@ public class MarkdownToSlides extends BaseConverter {
         try (final Stream<String> lines = Files.lines(p)) {
             final StringBuilder code = new StringBuilder();
             lines.forEach(line -> {
-
                 if (line.startsWith("#")) {
                     if (builder.hasTitle()) {
                         slides.add(builder.build());
@@ -120,6 +132,31 @@ public class MarkdownToSlides extends BaseConverter {
                     }
                 }
 
+                if (line.startsWith("|")) {
+                    if (!isInTable) {
+                        isInTable = true;
+                        tableBuilder = new TableBuilder();
+                    }
+                    if (line.startsWith("|:---")) {
+                        return;
+                    }
+
+                    if (!tableBuilder.hasColumns()) {
+                        tableBuilder.setColumns(convertTableColumns(line));
+                        return;
+                    }
+                    final String[] split = line.split("\\|");
+                    tableBuilder.addTableLine(Arrays.asList(split).subList(1, split.length));
+                    return;
+                }
+
+                if (isInTable || !line.startsWith("")) {
+                    isInTable = false;
+                    if (tableBuilder != null) {
+                        builder.withContents(tableBuilder.get());
+                    }
+                }
+
                 // Not code.
                 if (!line.isEmpty()) {
                     builder.addLines(line);
@@ -158,4 +195,21 @@ public class MarkdownToSlides extends BaseConverter {
         return matcher.group(2);
     }
 
+    /**
+     * Convert to table line.
+     * @param line
+     * @return
+     */
+    @SuppressWarnings("rawtypes")
+    private List<TableColumn<ObservableList<String>, String>> convertTableColumns(final String line) {
+        if (line == null || !line.contains("|")) {
+            return Collections.emptyList();
+        }
+
+        final String[] columnNames = line.split("\\|");
+        return IntStream.range(0, columnNames.length)
+                 .filter(i -> !columnNames[i].isEmpty())
+                 .mapToObj(i -> new TableColumn(columnNames[i]))
+                 .collect(Collectors.toList());
+    }
 }
