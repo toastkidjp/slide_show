@@ -346,6 +346,7 @@ public class Slideshow {
         final ClassLoader classLoader = getClass().getClassLoader();
         stylesheets.addAll(
                 classLoader.getResource("keywords.css").toExternalForm(),
+                classLoader.getResource("css/slide/common.css").toExternalForm(),
                 classLoader.getResource("css/snackbar.css").toExternalForm()
                 );
         Optional.ofNullable(cssUri).ifPresent(stylesheets::add);

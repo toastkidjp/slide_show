@@ -18,7 +18,9 @@ import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -30,7 +32,7 @@ import javafx.util.Duration;
  *
  * @author Toast kid
  */
-public class Slide extends ScrollPane {
+public class Slide extends VBox {
 
     /** Slide duration. */
     private static final Duration TRANSITION_DURATION = Duration.seconds(0.3d);
@@ -43,6 +45,9 @@ public class Slide extends ScrollPane {
 
     /** Title label. */
     private final Label title;
+
+    /** For scrollable overflow content. */
+    private final ScrollPane scroll;
 
     /** Contents. */
     private final VBox contents;
@@ -121,9 +126,10 @@ public class Slide extends ScrollPane {
      * Constructor.
      */
     private Slide(final Builder b) {
-        this.setHbarPolicy(ScrollBarPolicy.NEVER);
-        this.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
-        this.setFitToWidth(true);
+        this.scroll = new ScrollPane();
+        scroll.setHbarPolicy(ScrollBarPolicy.NEVER);
+        scroll.setVbarPolicy(ScrollBarPolicy.NEVER);
+        scroll.setFitToWidth(true);
         title = new Label(b.title);
         initTitle(b.isFront);
         contents = new VBox();
@@ -134,10 +140,16 @@ public class Slide extends ScrollPane {
         Optional.ofNullable(b.contents).ifPresent(contents.getChildren()::addAll);
         this.setVisible(false);
         Optional.ofNullable(b.bgImage).ifPresent(this::setBgImage);
-        if (b.isFront) {
-            this.contents.setAlignment(Pos.CENTER);
+
+        if (!b.isFront) {
+            this.heightProperty().addListener(e -> contents.setPrefHeight(this.getHeight()));
         }
-        this.setContent(contents);
+
+        scroll.setContent(contents);
+        this.getChildren().add(scroll);
+        if (b.isFront) {
+            this.setAlignment(Pos.CENTER);
+        }
     }
 
     /**
@@ -217,14 +229,22 @@ public class Slide extends ScrollPane {
      * Scroll up.
      */
     public void scrollUp() {
-        setVvalue(this.getVvalue() - 0.20d);
+        scroll.setVvalue(scroll.getVvalue() - 0.20d);
     }
 
     /**
      * Scroll down.
      */
     public void scrollDown() {
-        setVvalue(this.getVvalue() + 0.20d);
+        scroll.setVvalue(scroll.getVvalue() + 0.20d);
+    }
+
+    /**
+     * Return this slide's content.
+     * @return
+     */
+    public Pane getContent() {
+        return this.contents;
     }
 
 }
