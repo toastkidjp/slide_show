@@ -200,7 +200,6 @@ public class MarkdownToSlides extends BaseConverter {
      * @param line
      * @return
      */
-    @SuppressWarnings("rawtypes")
     private List<TableColumn<ObservableList<String>, String>> convertTableColumns(final String line) {
         if (line == null || !line.contains("|")) {
             return Collections.emptyList();
@@ -209,7 +208,7 @@ public class MarkdownToSlides extends BaseConverter {
         final String[] columnNames = line.split("\\|");
         return IntStream.range(0, columnNames.length)
                  .filter(i -> !columnNames[i].isEmpty())
-                 .mapToObj(i -> new TableColumn(columnNames[i]))
+                 .mapToObj(i -> new TableColumn<ObservableList<String>, String>(columnNames[i]))
                  .collect(Collectors.toList());
     }
 }
