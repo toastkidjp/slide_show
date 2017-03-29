@@ -219,7 +219,9 @@ public class Slideshow {
         this.isFullScreen = b.isFullScreen;
         initSubMenu();
 
-        maximizeStage();
+        if (owner != null) {
+            maximizeStage();
+        }
     }
 
     /**

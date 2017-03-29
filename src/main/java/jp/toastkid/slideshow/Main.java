@@ -18,9 +18,7 @@ public class Main extends Application {
     @Override
     public void start(final Stage stage) throws Exception {
         stage.setTitle(TITLE);
-        stage.setOnCloseRequest(event -> stage.close());
         new Slideshow.Builder()
-            .setOwner(stage)
             .setSource(Paths.get("sample.md"))
             .setIsFullScreen(false)
             .build()
