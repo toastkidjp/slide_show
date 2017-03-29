@@ -69,9 +69,17 @@ public class SlideTest extends ApplicationTest {
      * Test for coverage.
      */
     @Test
-    public void test() {
+    public void test_transition() {
         slide.rightIn();
         slide.leftIn();
+    }
+
+    /**
+     * Test of {@link Slide#getTitle()}.
+     */
+    @Test
+    public void test_getTitle() {
+        assertEquals("Title", slide.getTitle());
     }
 
     @Override

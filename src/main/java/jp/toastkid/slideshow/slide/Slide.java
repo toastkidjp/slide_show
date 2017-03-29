@@ -247,4 +247,12 @@ public class Slide extends VBox {
         return this.contents;
     }
 
+    /**
+     * Return this slide's title.
+     * @return title or empty.
+     */
+    public String getTitle() {
+        return title != null ? title.getText() : "";
+    }
+
 }

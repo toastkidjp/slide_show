@@ -522,6 +522,10 @@ public class Slideshow {
         final int i = current.get();
         indicator.setText(String.format("%d / %d", i, slides.size()));
         jfxProgressBar.setProgress((double) i / (double) slides.size());
+
+        if (stage != null) {
+            stage.setTitle(slide.getTitle());
+        }
     }
 
     /**
