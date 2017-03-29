@@ -83,7 +83,7 @@ public class MarkdownToSlides extends BaseConverter {
                     if (line.startsWith("# ")) {
                         builder.isFront(true);
                     }
-                    builder.title(line.substring(line.indexOf(" ")));
+                    builder.title(line.substring(line.indexOf(" ")).trim());
                     return;
                 }
 
