@@ -236,7 +236,7 @@ public class Slideshow {
 
         snackbar = new JFXSnackbar(subPane);
 
-        controller.getMessenger().subscribe(this::processMessage);
+        controller.subscribe(this::processMessage);
     }
 
     /**

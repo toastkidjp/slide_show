@@ -29,7 +29,7 @@ dependencies {
     provided 'org.slf4j:slf4j-api:1.7.21'
     provided 'org.slf4j:slf4j-log4j12:1.7.21'
     provided 'org.eclipse.collections:eclipse-collections:8.0.0'
-    provided 'io.projectreactor:reactor-core:3.0.5.RELEASE'
+    provided 'io.reactivex.rxjava2:rxjava:2.0.8'
     provided fileTree(dir: 'libs', include: '*.jar')
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.7.11'

@@ -4,6 +4,10 @@ import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.NumberValidator;
 
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import javafx.beans.property.IntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,7 +18,6 @@ import jp.toastkid.slideshow.message.Message;
 import jp.toastkid.slideshow.message.MoveMessage;
 import jp.toastkid.slideshow.message.PdfMessage;
 import jp.toastkid.slideshow.message.QuitMessage;
-import reactor.core.publisher.TopicProcessor;
 
 /**
  * SubMenu controller.
@@ -40,13 +43,13 @@ public class SubMenuController {
     private Stopwatch stopwatch;
 
     /** Message sender. */
-    private final TopicProcessor<Message> messenger;
+    private final Subject<Message> messenger;
 
     /**
      * NOP.
      */
     public SubMenuController() {
-        messenger = TopicProcessor.create();
+        messenger = PublishSubject.create();
     }
 
     /**
@@ -171,11 +174,11 @@ public class SubMenuController {
     }
 
     /**
-     * Return message sender.
+     * Return message subscription.
      * @return {@link TopicProcessor}.
      */
-    public TopicProcessor<Message> getMessenger() {
-        return messenger;
+    public Disposable subscribe(final Consumer<Message> c) {
+        return messenger.subscribe(c);
     }
 
 }
