@@ -1,6 +1,7 @@
 hs_err_pid*.log
 *.lnk
 *.pdf
+sample.md
 temp.html
 md.html
 logs/
