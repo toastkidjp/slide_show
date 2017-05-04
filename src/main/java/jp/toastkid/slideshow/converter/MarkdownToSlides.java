@@ -3,6 +3,7 @@ package jp.toastkid.slideshow.converter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -19,10 +20,11 @@ import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import jp.toastkid.script.highlight.SimpleHighlighter;
-import jp.toastkid.slideshow.slide.LineFactory;
 import jp.toastkid.slideshow.slide.Slide;
 
 /**
@@ -36,7 +38,7 @@ public class MarkdownToSlides extends BaseConverter {
     private static final Pattern BACKGROUND = Pattern.compile("\\!\\[background\\]\\((.+?)\\)");
 
     /** In-line image pattern. */
-    private static final Pattern IMAGE = Pattern.compile("\\!\\[(.+?)\\]\\((.+?)\\)");
+    private static final Pattern IMAGE = Pattern.compile("\\!\\[(.?)\\]\\((.+?)\\)");
 
     /** CSS specifying pattern. */
     private static final Pattern CSS = Pattern.compile("\\[css\\]\\((.+?)\\)");
@@ -95,8 +97,16 @@ public class MarkdownToSlides extends BaseConverter {
                         return;
                     }
 
-                    Optional.ofNullable(extractImageUrl(line))
-                            .ifPresent(image -> builder.withContents(LineFactory.centering(new ImageView(image))));
+                    final HBox images = new HBox();
+                    extractImageUrls(line)
+                        .stream()
+                        .map(ImageView::new)
+                        .forEach(images.getChildren()::add);
+                    if (images.getChildren().size() == 0) {
+                    	return;
+                    }
+                    images.setAlignment(Pos.CENTER);
+                    builder.withContents(images);
                     return;
                 }
 
@@ -187,12 +197,14 @@ public class MarkdownToSlides extends BaseConverter {
      * @param line line
      * @return image url
      */
-    private String extractImageUrl(final String line) {
+    private List<String> extractImageUrls(final String line) {
+        final List<String> imageUrls = new ArrayList<>();
         final Matcher matcher = IMAGE.matcher(line);
-        if (!matcher.find()) {
-            return null;
+        while (matcher.find()) {
+            imageUrls.add(matcher.group(2));
         }
-        return matcher.group(2);
+        System.out.println("extracted: " + imageUrls.size());
+        return imageUrls;
     }
 
     /**
