@@ -318,13 +318,13 @@ public class Slideshow {
      * @param cssPath
      */
     private void show(final Path filePath, final Path cssPath, final boolean isFullScreen) {
-        final String cssUri = readSlides(filePath);
+        final String slideSpecifiedCssUri = readSlides(filePath);
 
         final Scene scene = new Scene(loadRootPane());
         applyStyle(scene, cssPath != null
                 ? cssPath.toUri().toString()
                 : StyleManager.findUri(DEFAULT_CSS));
-        Optional.ofNullable(cssUri).ifPresent(c -> applyStyle(scene, c));
+        Optional.ofNullable(slideSpecifiedCssUri).ifPresent(uri -> applyStyle(scene, slideSpecifiedCssUri));
         putAccelerators(scene);
 
         stage = new Stage();
