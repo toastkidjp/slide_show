@@ -203,7 +203,6 @@ public class MarkdownToSlides extends BaseConverter {
         while (matcher.find()) {
             imageUrls.add(matcher.group(2));
         }
-        System.out.println("extracted: " + imageUrls.size());
         return imageUrls;
     }
 
