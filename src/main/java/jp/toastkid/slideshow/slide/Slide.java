@@ -2,7 +2,6 @@ package jp.toastkid.slideshow.slide;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,8 +64,6 @@ public class Slide extends VBox {
 
         private String title;
 
-        private List<String> lines;
-
         private List<Node> contents;
 
         public Builder title(final String title) {
@@ -79,25 +76,36 @@ public class Slide extends VBox {
             return this;
         }
 
+        public Builder addQuotedLines(final String... lines) {
+            ArrayIterate.collect(lines, line -> isFront ? LineFactory.centeredText(line) : LineFactory.normal(line))
+                        .forEach(line -> {
+                            line.getStyleClass().add("blockquote");
+                            addContent(line);
+                        });
+            return this;
+        }
+
         public Builder addLines(final String... lines) {
-            if (this.lines == null) {
-                this.lines = new ArrayList<>();
-            }
-            ArrayIterate.forEach(lines, this.lines::add);
+            ArrayIterate.collect(lines, line -> isFront ? LineFactory.centeredText(line) : LineFactory.normal(line))
+                        .forEach(this::addContent);
             return this;
         }
 
         public Builder withContents(final Node... lines) {
-            if (this.contents == null) {
-                this.contents = new ArrayList<>();
-            }
-            this.contents.addAll(Arrays.asList(lines));
+            ArrayIterate.forEach(lines, this::addContent);
             return this;
         }
 
         public Builder background(final String image) {
             this.bgImage = image;
             return this;
+        }
+
+        private void addContent(final Node node) {
+            if (this.contents == null) {
+                this.contents = new ArrayList<>();
+            }
+            this.contents.add(node);
         }
 
         /**
@@ -134,9 +142,6 @@ public class Slide extends VBox {
         initTitle(b.isFront);
         contents = new VBox();
         contents.getChildren().addAll(LineFactory.centering(title));
-        Optional.ofNullable(b.lines).ifPresent(lines -> lines.stream()
-                    .map(line -> b.isFront ? LineFactory.centeredText(line) : LineFactory.normal(line))
-                    .forEach(contents.getChildren()::add));
         Optional.ofNullable(b.contents).ifPresent(contents.getChildren()::addAll);
         this.setVisible(false);
         Optional.ofNullable(b.bgImage).ifPresent(this::setBgImage);

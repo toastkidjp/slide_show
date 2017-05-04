@@ -5,3 +5,8 @@
 .scroll-pane {
    -fx-background-color: transparent;
 }
+
+.blockquote {
+   -fx-font-style: italic;
+   -fx-background-color: rgba(240, 240, 240, 0.5);
+}

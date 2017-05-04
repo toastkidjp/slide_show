@@ -110,6 +110,11 @@ public class MarkdownToSlides extends BaseConverter {
                     return;
                 }
 
+                if (line.startsWith("> ")) {
+                    builder.addQuotedLines(line);
+                    return;
+                }
+
                 // Adding code block.
                 if (line.startsWith("```")) {
                     isInCodeBlock = !isInCodeBlock;
