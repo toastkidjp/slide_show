@@ -41,6 +41,9 @@ public class MarkdownToSlides extends BaseConverter {
     /** CSS specifying pattern. */
     private static final Pattern CSS = Pattern.compile("\\[css\\]\\((.+?)\\)");
 
+    /** In-line image pattern. */
+    private static final Pattern FOOTER_TEXT = Pattern.compile("\\[footer\\]\\((.+?)\\)");
+
     /** Source's path */
     private final Path p;
 
@@ -101,10 +104,18 @@ public class MarkdownToSlides extends BaseConverter {
                         .map(ImageView::new)
                         .forEach(images.getChildren()::add);
                     if (images.getChildren().size() == 0) {
-                    	return;
+                        return;
                     }
                     images.setAlignment(Pos.CENTER);
                     builder.withContents(images);
+                    return;
+                }
+
+                if (line.startsWith("[footer](")) {
+                    final Matcher matcher = FOOTER_TEXT.matcher(line);
+                    if (matcher.find()) {
+                        setFooterText(matcher.group(1));
+                    }
                     return;
                 }
 

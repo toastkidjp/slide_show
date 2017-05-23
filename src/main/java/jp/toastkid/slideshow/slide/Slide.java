@@ -151,6 +151,7 @@ public class Slide extends VBox {
 
         scroll.setContent(contents);
         this.getChildren().add(scroll);
+
         if (b.isFront) {
             this.setAlignment(Pos.CENTER);
         }

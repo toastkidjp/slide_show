@@ -13,6 +13,9 @@ public abstract class BaseConverter implements Converter {
     /** CSS title. */
     private String css;
 
+    /** Footer text. */
+    private String footerText;
+
     @Override
     public String getCss() {
         return css;
@@ -25,5 +28,21 @@ public abstract class BaseConverter implements Converter {
     protected void setCss(final String css) {
         this.css = css;
     }
+
+    /**
+     * Getter of footer text.
+     * @return footerText
+     */
+	public String getFooterText() {
+		return footerText;
+	}
+
+	/**
+	 * Setter of footer text.
+	 * @param footerText
+	 */
+	public void setFooterText(final String footerText) {
+		this.footerText = footerText;
+	}
 
 }

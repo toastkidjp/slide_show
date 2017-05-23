@@ -19,7 +19,13 @@ public interface Converter {
 
     /**
      * Getter of css.
-     * @return
+     * @return css
      */
     public String getCss();
+
+    /**
+     * Getter of footer text.
+     * @return footer text
+     */
+    public String getFooterText();
 }

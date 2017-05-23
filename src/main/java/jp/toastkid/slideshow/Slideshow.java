@@ -34,7 +34,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -112,6 +112,9 @@ public class Slideshow {
     /** Progress bar. */
     private JFXProgressBar jfxProgressBar;
 
+    /** Footer text label. */
+	private Label footerText;
+
     /** Progress indicator. */
     private Label indicator;
 
@@ -136,6 +139,7 @@ public class Slideshow {
     /** If you want to test, this flag should be false. */
     private final boolean isFullScreen;
 
+    /** Stage. */
     private Stage stage;
 
     /**
@@ -476,8 +480,10 @@ public class Slideshow {
     private void initProgressBox(final Pane root) {
         indicator = new Label();
         indicator.setFont(Font.font(40));
-        final HBox indicatorBox = new HBox(indicator);
-        indicatorBox.setAlignment(Pos.CENTER_RIGHT);
+
+        final BorderPane indicatorBox = new BorderPane();
+        indicatorBox.setLeft(footerText);
+        indicatorBox.setRight(indicator);
         jfxProgressBar = new JFXProgressBar(0);
         jfxProgressBar.setPrefWidth(Screen.getPrimary().getBounds().getWidth());
 
@@ -546,6 +552,8 @@ public class Slideshow {
         slides = converter.convert();
         current = new SimpleIntegerProperty(1);
         controller.setRange(1, slides.size(), current);
+        footerText = new Label(converter.getFooterText());
+        footerText.setFont(Font.font(40));
         return StyleManager.findUri(converter.getCss());
     }
 
