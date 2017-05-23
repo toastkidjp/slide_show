@@ -67,6 +67,11 @@
                   <Insets left="20.0" />
                </HBox.margin>
             </JFXButton>
+            <JFXButton fx:id="autoPlayButton" onAction="#autoPlay" text="Auto Play">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </JFXButton>
             <JFXButton onAction="#hide" text="Hide">
                <HBox.margin>
                   <Insets left="20.0" />
