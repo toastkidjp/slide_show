@@ -3,15 +3,15 @@ package jp.toastkid.slideshow;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
-import org.eclipse.collections.api.list.MutableList;
-import org.eclipse.collections.impl.list.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +104,7 @@ public class Slideshow {
     private static final String FXML_PATH = "scenes/SubMenu.fxml";
 
     /** Slides. */
-    private MutableList<Slide> slides;
+    private List<Slide> slides;
 
     /** Current slide index. */
     private IntegerProperty current;
@@ -363,7 +363,7 @@ public class Slideshow {
         try (final PDDocument doc = new PDDocument()) {
             final int width  = (int) owner.getWidth();
             final int height = (int) owner.getHeight();
-            Interval.oneTo(slides.size()).each(i ->{
+            IntStream.rangeClosed(1, slides.size()).forEach(i ->{
                 moveTo(i);
                 final long istart = System.currentTimeMillis();
                 final PDPage page = new PDPage(new PDRectangle(width, height));

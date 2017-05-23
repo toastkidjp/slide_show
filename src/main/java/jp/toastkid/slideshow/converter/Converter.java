@@ -1,6 +1,6 @@
 package jp.toastkid.slideshow.converter;
 
-import org.eclipse.collections.api.list.MutableList;
+import java.util.List;
 
 import jp.toastkid.slideshow.slide.Slide;
 
@@ -15,7 +15,7 @@ public interface Converter {
      * Convert text to Slide list.
      * @return
      */
-    public MutableList<Slide> convert();
+    public List<Slide> convert();
 
     /**
      * Getter of css.

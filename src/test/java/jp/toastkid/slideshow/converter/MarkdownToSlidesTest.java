@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.util.List;
 
-import org.eclipse.collections.api.list.MutableList;
 import org.fxmisc.richtext.GenericStyledArea;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
@@ -33,7 +33,7 @@ public class MarkdownToSlidesTest extends ApplicationTest {
     public void test() throws URISyntaxException {
         final Path testResource = TestResources.source();
         final MarkdownToSlides toSlides = new MarkdownToSlides(testResource);
-        final MutableList<Slide> slides = toSlides.convert();
+        final List<Slide> slides = toSlides.convert();
         assertEquals(5, slides.size());
         assertEquals("plain.css", toSlides.getCss());
 
@@ -46,7 +46,7 @@ public class MarkdownToSlidesTest extends ApplicationTest {
      * Check of code slide.
      * @param slides
      */
-    private void checkCodeSlide(final MutableList<Slide> slides) {
+    private void checkCodeSlide(final List<Slide> slides) {
         final Slide code = slides.get(3);
         final VBox contents = (VBox) code.getContent();
         @SuppressWarnings("rawtypes")
@@ -61,7 +61,7 @@ public class MarkdownToSlidesTest extends ApplicationTest {
      * Check of front slide.
      * @param slides
      */
-    private void checkFrontSlide(final MutableList<Slide> slides) {
+    private void checkFrontSlide(final List<Slide> slides) {
         final Slide front = slides.get(0);
         final VBox contents = (VBox) front.getContent();
         final Labeled title = (Labeled) ((HBox) contents.getChildren().get(0)).getChildren().get(0);
