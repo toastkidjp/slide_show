@@ -86,7 +86,7 @@ public class Stopwatch extends JFXButton {
                 (long) (duration.toMinutes() % 60.0),
                 (long) (duration.toSeconds() % 60.0)
                 )
-                + (active ? "|>" : "¡");
+                + (active ? "|>" : "â– ");
     }
 
     /**
