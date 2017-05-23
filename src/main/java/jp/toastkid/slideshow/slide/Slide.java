@@ -4,8 +4,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import org.eclipse.collections.impl.utility.ArrayIterate;
+import java.util.stream.Stream;
 
 import com.jfoenix.controls.JFXProgressBar;
 
@@ -77,7 +76,7 @@ public class Slide extends VBox {
         }
 
         public Builder addQuotedLines(final String... lines) {
-            ArrayIterate.collect(lines, line -> isFront ? LineFactory.centeredText(line) : LineFactory.normal(line))
+        	Stream.of(lines).map(line -> isFront ? LineFactory.centeredText(line) : LineFactory.normal(line))
                         .forEach(line -> {
                             line.getStyleClass().add("blockquote");
                             addContent(line);
@@ -86,13 +85,13 @@ public class Slide extends VBox {
         }
 
         public Builder addLines(final String... lines) {
-            ArrayIterate.collect(lines, line -> isFront ? LineFactory.centeredText(line) : LineFactory.normal(line))
-                        .forEach(this::addContent);
+        	Stream.of(lines).map(line -> isFront ? LineFactory.centeredText(line) : LineFactory.normal(line))
+        					.forEach(this::addContent);
             return this;
         }
 
         public Builder withContents(final Node... lines) {
-            ArrayIterate.forEach(lines, this::addContent);
+        	Stream.of(lines).forEach(this::addContent);
             return this;
         }
 
@@ -152,6 +151,7 @@ public class Slide extends VBox {
 
         scroll.setContent(contents);
         this.getChildren().add(scroll);
+
         if (b.isFront) {
             this.setAlignment(Pos.CENTER);
         }

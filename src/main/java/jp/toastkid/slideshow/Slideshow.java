@@ -3,15 +3,15 @@ package jp.toastkid.slideshow;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
-import org.eclipse.collections.api.list.MutableList;
-import org.eclipse.collections.impl.list.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -104,13 +104,16 @@ public class Slideshow {
     private static final String FXML_PATH = "scenes/SubMenu.fxml";
 
     /** Slides. */
-    private MutableList<Slide> slides;
+    private List<Slide> slides;
 
     /** Current slide index. */
     private IntegerProperty current;
 
     /** Progress bar. */
     private JFXProgressBar jfxProgressBar;
+
+    /** Footer text label. */
+	private Label footerText;
 
     /** Progress indicator. */
     private Label indicator;
@@ -136,6 +139,7 @@ public class Slideshow {
     /** If you want to test, this flag should be false. */
     private final boolean isFullScreen;
 
+    /** Stage. */
     private Stage stage;
 
     /**
@@ -361,9 +365,9 @@ public class Slideshow {
         final long start = System.currentTimeMillis();
         LOGGER.info("Start generating PDF.");
         try (final PDDocument doc = new PDDocument()) {
-            final int width  = (int) owner.getWidth();
-            final int height = (int) owner.getHeight();
-            Interval.oneTo(slides.size()).each(i ->{
+            final int width  = getSlideWidth();
+            final int height = getSlideHeight();
+            IntStream.rangeClosed(1, slides.size()).forEach(i ->{
                 moveTo(i);
                 final long istart = System.currentTimeMillis();
                 final PDPage page = new PDPage(new PDRectangle(width, height));
@@ -383,6 +387,14 @@ public class Slideshow {
             LOGGER.error("Occurred Error!", ie);
         }
         LOGGER.info("Ended generating PDF. {}[ms]", System.currentTimeMillis() - start);
+    }
+
+    private int getSlideHeight() {
+        return owner == null ? (int) stage.getHeight() : (int) owner.getHeight();
+    }
+
+    private int getSlideWidth() {
+        return owner == null ? (int) stage.getWidth()  : (int) owner.getWidth();
     }
 
     /**
@@ -468,8 +480,10 @@ public class Slideshow {
     private void initProgressBox(final Pane root) {
         indicator = new Label();
         indicator.setFont(Font.font(40));
-        final HBox indicatorBox = new HBox(indicator);
-        indicatorBox.setAlignment(Pos.CENTER_RIGHT);
+
+        final BorderPane indicatorBox = new BorderPane();
+        indicatorBox.setLeft(footerText);
+        indicatorBox.setRight(indicator);
         jfxProgressBar = new JFXProgressBar(0);
         jfxProgressBar.setPrefWidth(Screen.getPrimary().getBounds().getWidth());
 
@@ -538,6 +552,8 @@ public class Slideshow {
         slides = converter.convert();
         current = new SimpleIntegerProperty(1);
         controller.setRange(1, slides.size(), current);
+        footerText = new Label(converter.getFooterText());
+        footerText.setFont(Font.font(40));
         return StyleManager.findUri(converter.getCss());
     }
 

@@ -1,9 +1,12 @@
 package jp.toastkid.slideshow;
 
+import java.util.concurrent.TimeUnit;
+
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.NumberValidator;
 
+import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.subjects.PublishSubject;
@@ -11,6 +14,7 @@ import io.reactivex.subjects.Subject;
 import javafx.beans.property.IntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import jp.toastkid.slideshow.control.Stopwatch;
 import jp.toastkid.slideshow.message.HidingMenuMessage;
@@ -42,8 +46,15 @@ public class SubMenuController {
     @FXML
     private Stopwatch stopwatch;
 
+    /** Auto play button. */
+    @FXML
+    private Button autoPlayButton;
+
     /** Message sender. */
     private final Subject<Message> messenger;
+
+    /** Auto play disposable. */
+	private Disposable autoPlay;
 
     /**
      * NOP.
@@ -124,6 +135,20 @@ public class SubMenuController {
     @FXML
     private void quit() {
         messenger.onNext(QuitMessage.make());
+    }
+
+    /**
+     * Auto play.
+     */
+    @FXML
+    private void autoPlay() {
+    	if (autoPlay != null && !autoPlay.isDisposed()) {
+    		autoPlay.dispose();
+    		autoPlayButton.setText("Auto play");
+    		return;
+    	}
+    	autoPlayButton.setText("Stop");
+        autoPlay = Observable.interval(5, TimeUnit.SECONDS).forEach(i -> forward());
     }
 
     /**

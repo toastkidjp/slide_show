@@ -14,8 +14,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import org.eclipse.collections.api.list.MutableList;
-import org.eclipse.collections.impl.factory.Lists;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
@@ -42,6 +40,9 @@ public class MarkdownToSlides extends BaseConverter {
 
     /** CSS specifying pattern. */
     private static final Pattern CSS = Pattern.compile("\\[css\\]\\((.+?)\\)");
+
+    /** In-line image pattern. */
+    private static final Pattern FOOTER_TEXT = Pattern.compile("\\[footer\\]\\((.+?)\\)");
 
     /** Source's path */
     private final Path p;
@@ -72,8 +73,8 @@ public class MarkdownToSlides extends BaseConverter {
      * @return List&lt;Slide&gt;
      */
     @Override
-    public MutableList<Slide> convert() {
-        final MutableList<Slide> slides = Lists.mutable.empty();
+    public List<Slide> convert() {
+        final List<Slide> slides = new ArrayList<>();
         try (final Stream<String> lines = Files.lines(p)) {
             final StringBuilder code = new StringBuilder();
             lines.forEach(line -> {
@@ -103,10 +104,18 @@ public class MarkdownToSlides extends BaseConverter {
                         .map(ImageView::new)
                         .forEach(images.getChildren()::add);
                     if (images.getChildren().size() == 0) {
-                    	return;
+                        return;
                     }
                     images.setAlignment(Pos.CENTER);
                     builder.withContents(images);
+                    return;
+                }
+
+                if (line.startsWith("[footer](")) {
+                    final Matcher matcher = FOOTER_TEXT.matcher(line);
+                    if (matcher.find()) {
+                        setFooterText(matcher.group(1));
+                    }
                     return;
                 }
 
