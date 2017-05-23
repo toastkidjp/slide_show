@@ -361,8 +361,8 @@ public class Slideshow {
         final long start = System.currentTimeMillis();
         LOGGER.info("Start generating PDF.");
         try (final PDDocument doc = new PDDocument()) {
-            final int width  = (int) owner.getWidth();
-            final int height = (int) owner.getHeight();
+            final int width  = getSlideWidth();
+            final int height = getSlideHeight();
             IntStream.rangeClosed(1, slides.size()).forEach(i ->{
                 moveTo(i);
                 final long istart = System.currentTimeMillis();
@@ -383,6 +383,14 @@ public class Slideshow {
             LOGGER.error("Occurred Error!", ie);
         }
         LOGGER.info("Ended generating PDF. {}[ms]", System.currentTimeMillis() - start);
+    }
+
+    private int getSlideHeight() {
+        return owner == null ? (int) stage.getHeight() : (int) owner.getHeight();
+    }
+
+    private int getSlideWidth() {
+        return owner == null ? (int) stage.getWidth()  : (int) owner.getWidth();
     }
 
     /**
