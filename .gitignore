@@ -1,3 +1,5 @@
+*.iml
+.idea/
 hs_err_pid*.log
 *.lnk
 *.pdf
