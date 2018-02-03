@@ -410,7 +410,7 @@ public class Slideshow {
      */
     private void putAccelerators(final Scene scene) {
         final ObservableMap<KeyCombination,Runnable> accelerators = scene.getAccelerators();
-        accelerators.put(FULL_SCREEN_KEY, () -> stage.setFullScreen(true));
+        accelerators.put(FULL_SCREEN_KEY, () -> stage.setFullScreen(!stage.isFullScreen()));
         accelerators.put(BACK_1,    this::back);
         accelerators.put(BACK_2,    this::back);
         accelerators.put(FORWARD_1, this::forward);
