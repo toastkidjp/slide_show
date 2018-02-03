@@ -152,15 +152,13 @@ public class Slide extends VBox {
         this.setVisible(false);
         Optional.ofNullable(b.bgImage).ifPresent(this::setBgImage);
 
-        if (!b.isFront) {
-            this.heightProperty().addListener(e -> contents.setPrefHeight(this.getHeight()));
-        }
-
-        scroll.setContent(contents);
-        this.getChildren().add(scroll);
-
         if (b.isFront) {
+            this.getChildren().add(contents);
             this.setAlignment(Pos.CENTER);
+        } else {
+            scroll.setContent(contents);
+            this.getChildren().add(scroll);
+            this.heightProperty().addListener(e -> contents.setPrefHeight(this.getHeight()));
         }
     }
 
