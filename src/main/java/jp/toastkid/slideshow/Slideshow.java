@@ -84,7 +84,7 @@ public class Slideshow {
     /** Back key. */
     private static final KeyCodeCombination BACK_2 = new KeyCodeCombination(KeyCode.LEFT);
 
-    /** Back key. */
+    /** Scroll up key. */
     private static final KeyCodeCombination UP = new KeyCodeCombination(KeyCode.UP);
 
     /** Forward key. */
@@ -93,14 +93,14 @@ public class Slideshow {
     /** Forward key. */
     private static final KeyCodeCombination FORWARD_2 = new KeyCodeCombination(KeyCode.RIGHT);
 
-    /** Forward key. */
+    /** Scroll down key. */
     private static final KeyCodeCombination DOWN = new KeyCodeCombination(KeyCode.DOWN);
 
-    /** Quit key. */
+    /** Submenu key. */
     private static final KeyCodeCombination SUB
         = new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN);
 
-    /** Quit key. */
+    /** Save key. */
     private static final KeyCodeCombination SAVE
         = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN);
 
