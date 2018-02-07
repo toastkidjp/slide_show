@@ -7,25 +7,9 @@
  */
 package jp.toastkid.slideshow;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.IntStream;
-
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXSnackbar.SnackbarEvent;
-
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -57,6 +41,20 @@ import jp.toastkid.slideshow.message.PdfMessage;
 import jp.toastkid.slideshow.message.QuitMessage;
 import jp.toastkid.slideshow.slide.Slide;
 import jp.toastkid.slideshow.style.StyleManager;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 /**
  * Main launcher.
@@ -171,8 +169,8 @@ public class Slideshow {
 
         /**
          * Set stage.
-         * @param s
-         * @return
+         * @param s {@link Stage}
+         * @return {@link Builder}
          */
         public Builder setOwner(final Stage s) {
             this.stage = s;
@@ -181,8 +179,8 @@ public class Slideshow {
 
         /**
          * Set source path.
-         * @param p
-         * @return
+         * @param p {@link Path}
+         * @return {@link Builder}
          */
         public Builder setSource(final Path p) {
             this.source = p;
@@ -191,8 +189,8 @@ public class Slideshow {
 
         /**
          * Set css path.
-         * @param p
-         * @return
+         * @param p {@link Path}
+         * @return {@link Builder}
          */
         public Builder setStylesheet(final Path p) {
             this.css = p;
@@ -201,8 +199,8 @@ public class Slideshow {
 
         /**
          * Set is full screen.
-         * @param f
-         * @return
+         * @param f boolean
+         * @return {@link Builder}
          */
         public Builder setIsFullScreen(final boolean f) {
             this.isFullScreen = f;
@@ -256,7 +254,7 @@ public class Slideshow {
 
     /**
      * Process passed message.
-     * @param m
+     * @param m {@link Message}
      */
     private void processMessage(final Message m) {
         if (m instanceof HidingMenuMessage) {
@@ -328,9 +326,9 @@ public class Slideshow {
     /**
      * Show this app with passed stage.
      *
-     * @param owner
-     * @param filePath
-     * @param cssPath
+     * @param filePath {@link Path}
+     * @param cssPath {@link Path}
+     * @param isFullScreen boolean
      */
     private void show(final Path filePath, final Path cssPath, final boolean isFullScreen) {
         final String slideSpecifiedCssUri = readSlides(filePath);
@@ -355,8 +353,8 @@ public class Slideshow {
 
     /**
      * Apply style with file uri to scene.
-     * @param scene
-     * @param cssUri
+     * @param scene {@link Scene}
+     * @param cssUri {@link String}
      */
     private void applyStyle(final Scene scene, final String cssUri) {
         final ObservableList<String> stylesheets = scene.getStylesheets();
@@ -410,7 +408,7 @@ public class Slideshow {
 
     /**
      * Put accelerators.
-     * @param scene
+     * @param scene {@link Scene}
      */
     private void putAccelerators(final Scene scene) {
         final ObservableMap<KeyCombination,Runnable> accelerators = scene.getAccelerators();
@@ -473,7 +471,7 @@ public class Slideshow {
 
     /**
      * Make root pane and set slides.
-     * @return
+     * @return rootPane
      */
     private Pane loadRootPane() {
         final Pane root = new StackPane();
@@ -486,7 +484,7 @@ public class Slideshow {
 
     /**
      * Initialize progress bar and indicator.
-     * @param root
+     * @param root {@link Pane}
      */
     private void initProgressBox(final Pane root) {
         indicator = new Label();
@@ -519,7 +517,7 @@ public class Slideshow {
 
     /**
      * Move to specified index slide.
-     * @param index
+     * @param index int
      */
     private void moveTo(final int index) {
         if (index <= 0 || slides.size() < index || index == current.get()) {
@@ -534,7 +532,7 @@ public class Slideshow {
 
     /**
      * Move new slide.
-     * @param isForward
+     * @param isForward boolean
      */
     private void move(final boolean isForward) {
         final Slide slide = slides.get(current.get() - 1);
@@ -570,7 +568,7 @@ public class Slideshow {
 
     /**
      * Find suitable converter by file extension.
-     * @param filePath
+     * @param filePath {@link Path}
      * @return Converter
      */
     private Converter findConverter(final Path filePath) {
