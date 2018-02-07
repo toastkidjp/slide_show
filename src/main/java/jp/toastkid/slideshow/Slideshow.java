@@ -19,6 +19,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
@@ -524,7 +525,7 @@ public class Slideshow {
             return;
         }
 
-        slides.stream().filter(s -> s.isVisible()).forEach(s -> s.setVisible(false));
+        slides.stream().filter(Node::isVisible).forEach(s -> s.setVisible(false));
         final boolean isForward = current.get() < index;
         current.set(index);
         move(isForward);
