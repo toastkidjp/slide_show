@@ -240,6 +240,10 @@ public class Slideshow {
      */
     private void initSubMenu() {
         controller = readSub();
+        if (controller == null) {
+            return;
+        }
+
         subPane = controller.getRoot();
         subPane.setStyle("-fx-background-color: #EEEEEE;"
                 + "-fx-effect: dropshadow(three-pass-box, #000033, 10, 0, 0, 0);");
