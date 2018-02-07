@@ -19,7 +19,7 @@ import javafx.scene.text.Font;
  *
  * @author Toast kid
  */
-public class LineFactory {
+class LineFactory {
 
     /** Title label's font. */
     private static final Font LINE_FONT = new Font(80);
@@ -36,7 +36,7 @@ public class LineFactory {
      * @param text line's text
      * @return Label
      */
-    public static Label normal(final String text) {
+    static Label normal(final String text) {
         final Label line = new Label(text);
         line.getStyleClass().add("line");
         line.setFont(LINE_FONT);
@@ -50,7 +50,7 @@ public class LineFactory {
      * @param n Node
      * @return
      */
-    public static Node centering(final Node n) {
+    static Node centering(final Node n) {
         final HBox forCentering = new HBox(n);
         forCentering.setAlignment(Pos.CENTER);
         return forCentering;
@@ -61,7 +61,7 @@ public class LineFactory {
      * @param text
      * @return Node
      */
-    public static Node centeredText(final String text) {
+    static Node centeredText(final String text) {
         final HBox forCentering = new HBox(normal(text));
         forCentering.setAlignment(Pos.CENTER);
         return forCentering;
