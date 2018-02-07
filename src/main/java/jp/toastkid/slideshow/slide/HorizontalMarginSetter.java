@@ -8,8 +8,9 @@
 
 package jp.toastkid.slideshow.slide;
 
-import javafx.scene.layout.VBox;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.layout.VBox;
 
 /**
  * @author toastkidjp
@@ -19,7 +20,7 @@ class HorizontalMarginSetter {
     /**
      * Common horizontal insets.
      */
-    private static final javafx.geometry.Insets INSETS
+    private static final Insets INSETS
             = new javafx.geometry.Insets(0.0d, 40.0d, 0.0d, 40.0d);
 
     /**
