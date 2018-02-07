@@ -561,7 +561,7 @@ public class Slideshow {
         final Converter converter = findConverter(filePath);
         slides = converter.convert();
         current = new SimpleIntegerProperty(1);
-        controller.setRange(1, slides.size(), current);
+        controller.setRange(1, slides.size());
         footerText = new Label(converter.getFooterText());
         footerText.setFont(Font.font(40));
         return StyleManager.findUri(converter.getCss());

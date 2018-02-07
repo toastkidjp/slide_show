@@ -7,18 +7,14 @@
  */
 package jp.toastkid.slideshow;
 
-import java.util.concurrent.TimeUnit;
-
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.NumberValidator;
-
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
-import javafx.beans.property.IntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -29,6 +25,8 @@ import jp.toastkid.slideshow.message.Message;
 import jp.toastkid.slideshow.message.MoveMessage;
 import jp.toastkid.slideshow.message.PdfMessage;
 import jp.toastkid.slideshow.message.QuitMessage;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * SubMenu controller.
@@ -160,12 +158,10 @@ public class SubMenuController {
 
     /**
      * Set min and max value.
-     * @param min
-     * @param max
-     * @param current
-     * @param index
+     * @param min min value
+     * @param max max value
      */
-    public void setRange(final int min, final int max, final IntegerProperty current) {
+    void setRange(final int min, final int max) {
         indexSlider.setMin(min);
         indexSlider.setMax(max);
         indexSlider.setBlockIncrement(1.0d);
@@ -192,7 +188,7 @@ public class SubMenuController {
 
     /**
      * Pass root pane.
-     * @return
+     * @return Root pane
      */
     public Pane getRoot() {
         return root;
@@ -201,13 +197,13 @@ public class SubMenuController {
     /**
      * Set focus on index input.
      */
-    public void setFocus() {
+    void setFocus() {
         indexInput.requestFocus();
     }
 
     /**
      * Return message subscription.
-     * @return {@link TopicProcessor}.
+     * @return {@link Consumer}.
      */
     public Disposable subscribe(final Consumer<Message> c) {
         return messenger.subscribe(c);
