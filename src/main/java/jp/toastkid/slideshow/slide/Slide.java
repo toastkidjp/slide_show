@@ -83,7 +83,7 @@ public class Slide extends VBox {
         }
 
         public Builder addQuotedLines(final String... lines) {
-        	Stream.of(lines).map(line -> isFront ? LineFactory.centeredText(line) : LineFactory.normal(line))
+            Stream.of(lines).map(line -> isFront ? LineFactory.centeredText(line) : LineFactory.normal(line))
                         .forEach(line -> {
                             line.getStyleClass().add("blockquote");
                             addContent(line);
@@ -92,13 +92,13 @@ public class Slide extends VBox {
         }
 
         public Builder addLines(final String... lines) {
-        	Stream.of(lines).map(line -> isFront ? LineFactory.centeredText(line) : LineFactory.normal(line))
-        					.forEach(this::addContent);
+            Stream.of(lines).map(line -> isFront ? LineFactory.centeredText(line) : LineFactory.normal(line))
+                            .forEach(this::addContent);
             return this;
         }
 
         public Builder withContents(final Node... lines) {
-        	Stream.of(lines).forEach(this::addContent);
+            Stream.of(lines).forEach(this::addContent);
             return this;
         }
 
