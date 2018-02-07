@@ -299,7 +299,7 @@ public class Slideshow {
      * Init submenu controller.
      * @return Controller
      */
-    private final SubMenuController readSub() {
+    private SubMenuController readSub() {
         try {
             final FXMLLoader loader
                 = new FXMLLoader(getClass().getClassLoader().getResource(FXML_PATH));
