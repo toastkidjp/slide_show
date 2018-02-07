@@ -148,15 +148,18 @@ public class Slide extends VBox {
         initTitle(b.isFront);
         contents = new VBox();
         contents.getChildren().addAll(LineFactory.centering(title));
+
         Optional.ofNullable(b.contents).ifPresent(contents.getChildren()::addAll);
         this.setVisible(false);
         Optional.ofNullable(b.bgImage).ifPresent(this::setBgImage);
 
         if (b.isFront) {
+            HorizontalMarginSetter.invoke(contents);
             this.getChildren().add(contents);
             this.setAlignment(Pos.CENTER);
         } else {
             scroll.setContent(contents);
+            HorizontalMarginSetter.invoke(scroll);
             this.getChildren().add(scroll);
             this.heightProperty().addListener(e -> contents.setPrefHeight(this.getHeight()));
         }
