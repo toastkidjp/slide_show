@@ -168,7 +168,7 @@ public class Slide extends VBox {
     /**
      * Init title.
      */
-    protected void initTitle(final boolean isTitle) {
+    private void initTitle(final boolean isTitle) {
         title.setFont(isTitle ? TITLE_MAIN_FONT : HEAD_FONT);
         title.setWrapText(true);
         title.getStyleClass().add("title");
