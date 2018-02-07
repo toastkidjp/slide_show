@@ -40,16 +40,16 @@ public abstract class BaseConverter implements Converter {
      * Getter of footer text.
      * @return footerText
      */
-	public String getFooterText() {
-		return footerText;
-	}
+    public String getFooterText() {
+        return footerText;
+    }
 
-	/**
-	 * Setter of footer text.
-	 * @param footerText
-	 */
-	public void setFooterText(final String footerText) {
-		this.footerText = footerText;
-	}
+    /**
+     * Setter of footer text.
+     * @param footerText
+     */
+    public void setFooterText(final String footerText) {
+        this.footerText = footerText;
+    }
 
 }

@@ -61,7 +61,7 @@ public class SubMenuController {
     private final Subject<Message> messenger;
 
     /** Auto play disposable. */
-	private Disposable autoPlay;
+    private Disposable autoPlay;
 
     /**
      * NOP.
@@ -149,12 +149,12 @@ public class SubMenuController {
      */
     @FXML
     private void autoPlay() {
-    	if (autoPlay != null && !autoPlay.isDisposed()) {
-    		autoPlay.dispose();
-    		autoPlayButton.setText("Auto play");
-    		return;
-    	}
-    	autoPlayButton.setText("Stop");
+        if (autoPlay != null && !autoPlay.isDisposed()) {
+            autoPlay.dispose();
+            autoPlayButton.setText("Auto play");
+            return;
+        }
+        autoPlayButton.setText("Stop");
         autoPlay = Observable.interval(5, TimeUnit.SECONDS).forEach(i -> forward());
     }
 

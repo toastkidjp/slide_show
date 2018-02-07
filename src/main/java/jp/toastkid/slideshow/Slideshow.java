@@ -119,7 +119,7 @@ public class Slideshow {
     private JFXProgressBar jfxProgressBar;
 
     /** Footer text label. */
-	private Label footerText;
+    private Label footerText;
 
     /** Progress indicator. */
     private Label indicator;
