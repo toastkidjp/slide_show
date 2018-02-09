@@ -7,10 +7,10 @@
  */
 package jp.toastkid.slideshow;
 
-import java.nio.file.Paths;
-
 import javafx.application.Application;
 import javafx.stage.Stage;
+
+import java.nio.file.Paths;
 
 /**
  * Simple presentation tool powered by JavaFX.
@@ -35,7 +35,7 @@ public class Main extends Application {
     /**
      * Main method.
      *
-     * @param args
+     * @param args commandline arguments
      */
     public static void main(final String[] args) {
         Application.launch(Main.class);
