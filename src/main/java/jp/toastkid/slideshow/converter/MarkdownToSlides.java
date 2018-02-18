@@ -29,7 +29,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import jp.toastkid.script.highlight.SimpleHighlighter;
+import jp.toastkid.script.highlight.KotlinHighlighter;
 import jp.toastkid.slideshow.slide.Slide;
 
 /**
@@ -136,8 +136,7 @@ public class MarkdownToSlides extends BaseConverter {
                     isInCodeBlock = !isInCodeBlock;
                     if (!isInCodeBlock && code.length() != 0) {
                         final CodeArea codeArea = new CodeArea();
-                        new SimpleHighlighter(codeArea, "keywords/groovy.txt", "keywords/java.txt")
-                            .highlight();
+                        new KotlinHighlighter(codeArea).highlight();
                         codeArea.setEditable(false);
                         codeArea.setStyle("-fx-font-size: 40pt;");
                         codeArea.replaceText(code.toString());
